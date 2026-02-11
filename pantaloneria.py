@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 import time
-import random
 
-# --- 1. CONFIGURACIÓN PREMIUM DE LA PÁGINA ---
+# --- 1. CONFIGURACIÓN VISUAL (MODO PRESENTACIÓN) ---
 st.set_page_config(
     page_title="Pantalonería Integral | Proyecto de Grado",
     page_icon="🧵",
@@ -11,65 +10,56 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. ESTILOS CSS "ULTRA PRO" (Diseño Limpio y Académico) ---
+# --- 2. CSS PERSONALIZADO (ESTILO DE TESIS) ---
 st.markdown("""
     <style>
-    /* Tipografía y Fondos */
-    .stApp { background-color: #Fdfdfd; }
+    /* Fondo y fuentes */
+    .stApp { background-color: #fcfcfc; }
+    h1, h2, h3 { color: #1a1a1a; font-family: 'Arial', sans-serif; font-weight: 700; }
     
-    /* Encabezados */
-    h1, h2, h3 { color: #1B2631; font-family: 'Helvetica Neue', sans-serif; }
-    .highlight { color: #4B0082; font-weight: bold; }
-    
-    /* Tarjetas de Métricas (Digital Locker) */
-    .metric-card {
-        background-color: #ffffff;
-        border: 1px solid #e0e0e0;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border-left: 6px solid #4B0082; /* Morado Institucional */
-        transition: transform 0.2s;
-    }
-    .metric-card:hover { transform: scale(1.02); }
-    
-    /* Botones Personalizados */
-    .stButton>button {
-        background-color: #1B2631; /* Negro/Azul Oscuro */
-        color: white;
-        border-radius: 8px;
-        border: none;
-        padding: 12px 24px;
-        font-weight: 500;
-        width: 100%;
-    }
-    .stButton>button:hover {
-        background-color: #4B0082; /* Cambio a Morado al pasar el mouse */
-        box-shadow: 0 4px 12px rgba(75, 0, 130, 0.3);
-    }
-    
-    /* Ficha Técnica */
-    .tech-spec {
-        font-size: 0.85rem;
-        color: #555;
-        background-color: #f8f9fa;
+    /* Estilo de los Créditos en Sidebar */
+    .credit-box {
+        background-color: #f0f2f6;
         padding: 10px;
         border-radius: 5px;
-        border-left: 3px solid #ccc;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        border-left: 3px solid #4B0082;
+    }
+    
+    /* Tarjetas de Producto en Catálogo */
+    .product-card {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .price-tag {
+        font-size: 1.5rem;
+        color: #4B0082;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    
+    /* Botones */
+    .stButton>button {
+        width: 100%;
+        border-radius: 5px;
+        font-weight: 600;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. DIGITAL LOCKER (Base de Datos Realista) ---
+# --- 3. BASE DE DATOS (DIGITAL LOCKER) ---
 if 'db_clientes' not in st.session_state:
     st.session_state.db_clientes = {
-        '1001': {'nombre': 'Alejandro Romero', 'cintura': 82, 'largo': 104, 'tiro': 'Regular', 'fit': 'Slim Fit'},
-        # JURADO 1
-        '1002': {'nombre': 'Lic. Samael Gómez (Panelista)', 'cintura': 94, 'largo': 100, 'tiro': 'Corto', 'fit': 'Regular Comfort'},
-        # JURADO 2 (NUEVO)
-        '1004': {'nombre': 'Lic. Miguel Vidal (Relator)', 'cintura': 88, 'largo': 102, 'tiro': 'Regular', 'fit': 'Tailored Fit'},
-        # TUTORA
-        '1003': {'nombre': 'Lic. Jessica Daza (Tutora)', 'cintura': 70, 'largo': 95, 'tiro': 'Alto', 'fit': 'Relaxed'}
+        '1001': {'nombre': 'Alejandro Romero', 'rol': 'Postulante', 'cintura': 82, 'largo': 104, 'fit': 'Slim Fit'},
+        # CORRECCIÓN DE NOMBRES Y CARGOS
+        '1002': {'nombre': 'Samael Gómez Rúa', 'rol': 'Panelista', 'cintura': 94, 'largo': 100, 'fit': 'Regular Comfort'},
+        '1004': {'nombre': 'Miguel Vidal', 'rol': 'Relator', 'cintura': 88, 'largo': 102, 'fit': 'Tailored Fit'},
+        '1003': {'nombre': 'Jessica Susana Daza Morales', 'rol': 'Tutora', 'cintura': 70, 'largo': 95, 'fit': 'Relaxed'}
     }
 
 if 'carrito' not in st.session_state:
@@ -77,233 +67,181 @@ if 'carrito' not in st.session_state:
 if 'usuario' not in st.session_state:
     st.session_state.usuario = None
 
-# --- 4. SIDEBAR ACADÉMICO ---
+# --- 4. BARRA LATERAL (DATOS ACADÉMICOS) ---
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/2800/2800201.png", width=70)
-    st.markdown("### Proyecto de Grado")
+    st.image("https://cdn-icons-png.flaticon.com/512/2800/2800201.png", width=60)
+    st.markdown("### PROYECTO DE GRADO")
     st.caption("Ingeniería Comercial - UCB 2026")
+    
     st.markdown("---")
-    st.markdown("**Postulante:**\nAlejandro M. Romero Vidaurre")
-    st.markdown("**Tribunal:**")
-    st.text("• Lic. Jessica Daza (Tutora)")
-    st.text("• Lic. Samael Gómez (Panelista)")
-    st.text("• Lic. Miguel Vidal (Relator)")
+    st.markdown("**Postulante:** Alejandro M. Romero Vidaurre")
     st.markdown("---")
-    menu = st.radio("Navegación del Sistema:", ["Inicio & Phygital", "🔐 Digital Locker", "👖 Catálogo Técnico", "🛒 Checkout"])
+    
+    # Créditos Formateados
+    st.markdown("**Tribunal Evaluador:**")
+    st.markdown("<div class='credit-box'>Tutora<br><b>Jessica Susana Daza Morales</b></div>", unsafe_allow_html=True)
+    st.markdown("<div class='credit-box'>Panelista<br><b>Samael Gómez Rúa</b></div>", unsafe_allow_html=True)
+    st.markdown("<div class='credit-box'>Relator<br><b>Miguel Vidal</b></div>", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    menu = st.radio("MENÚ DEL SISTEMA", ["🏠 INICIO", "🔐 DIGITAL LOCKER", "👖 CATÁLOGO", "🛒 MI PEDIDO"])
 
 # --- 5. LÓGICA DEL SISTEMA ---
 
-# --- HOME ---
-if menu == "Inicio & Phygital":
-    st.title("PANTALONERÍA INTEGRAL MASCULINA")
-    st.markdown("#### *La fusión entre Sastrería Tradicional y Personalización Digital*")
+# === INICIO ===
+if menu == "🏠 INICIO":
+    # Hero Section
+    st.markdown("# PANTALONERÍA INTEGRAL MASCULINA")
+    st.markdown("### *Modelo Phygital: Donde la sastrería encuentra la tecnología.*")
     
-    # Hero Section con imagen de calidad
-    st.image("https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1200&q=80", caption="Taller de Confección en Sopocachi", use_column_width=True)
+    st.image("https://images.unsplash.com/photo-1593030761757-71bd90dbe3e4?q=80&w=1200&auto=format&fit=crop", use_column_width=True)
+    
+    st.divider()
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.info("🎯 **1. Captura de Datos**\n\nEl cliente visita la tienda en Sopocachi una sola vez. Se escanean sus medidas y preferencias de Fit.")
+        st.markdown("#### 📍 1. Tienda (Sopocachi)")
+        st.write("Visita única. Escaneo de medidas y selección de telas. Ubicación estratégica entre el Centro y la Sur.")
     with col2:
-        st.warning("💾 **2. Digital Locker**\n\nCreamos un avatar matemático del cliente. Sus medidas quedan guardadas en la nube para siempre.")
+        st.markdown("#### ☁️ 2. Digital Locker")
+        st.write("Tus medidas se guardan en la nube. Creamos tu 'Avatar' matemático para futuras compras.")
     with col3:
-        st.success("📦 **3. Recompra Inteligente**\n\nEl cliente pide nuevos pantalones desde su celular. El sistema ya sabe su talla exacta.")
+        st.markdown("#### 📦 3. E-Commerce")
+        st.write("Pide desde casa sin miedo a fallar la talla. Entrega en 24 horas en toda La Paz.")
 
-    st.markdown("---")
-    st.error("💡 **DEMO PARA JURADO:** Diríjase a 'Digital Locker' e ingrese el ID **1004** (Lic. Vidal) o **1002** (Lic. Gómez).")
+    st.info("ℹ️ **Nota para el Tribunal:** Para probar el sistema, diríjase a 'Digital Locker' e ingrese el ID **1004** (Relator) o **1002** (Panelista).")
 
-# --- DIGITAL LOCKER ---
-elif menu == "🔐 Digital Locker":
-    st.title("🔐 Acceso Biométrico")
-    st.markdown("El corazón del negocio: Base de datos de moldería personalizada.")
+# === DIGITAL LOCKER ===
+elif menu == "🔐 DIGITAL LOCKER":
+    st.title("🔐 Acceso a Perfil Biométrico")
+    st.markdown("Simulación de base de datos de clientes con moldería digital.")
     
-    col_izq, col_der = st.columns([1, 2])
+    c1, c2 = st.columns([1, 2])
     
-    with col_izq:
-        st.markdown("#### Identificación")
-        id_input = st.text_input("Ingrese ID de Cliente:", placeholder="Ej: 1004")
-        if st.button("Buscar Expediente"):
-            if id_input in st.session_state.db_clientes:
-                st.session_state.usuario = st.session_state.db_clientes[id_input]
-                st.toast(f"Perfil cargado: {st.session_state.usuario['nombre']}", icon="✅")
+    with c1:
+        st.markdown("### Identificación")
+        input_id = st.text_input("Ingrese ID de Cliente:", placeholder="Ej: 1004")
+        if st.button("🔍 CONSULTAR BASE DE DATOS"):
+            if input_id in st.session_state.db_clientes:
+                st.session_state.usuario = st.session_state.db_clientes[input_id]
+                st.toast("Identidad Verificada Correctamente", icon="✅")
             else:
-                st.error("ID no encontrado. Pruebe con 1004 o 1002.")
+                st.error("ID no encontrado. Intente con 1002 o 1004.")
     
-    with col_der:
+    with c2:
         if st.session_state.usuario:
-            user = st.session_state.usuario
-            st.markdown(f"### 👤 {user['nombre']}")
-            st.markdown(f"**Estado:** Cliente Verificado | **Última visita:** Sopocachi")
+            u = st.session_state.usuario
+            st.success(f"BIENVENIDO: {u['nombre']}")
             
-            # Tarjeta de Datos
+            # Tarjeta de Datos Técnicos
             st.markdown(f"""
-            <div class="metric-card">
-                <div style="display: grid; grid-template-columns: 1fr 1fr;">
-                    <div>
-                        <p style="color:#888; margin:0;">Cintura Anatómica</p>
-                        <h2 style="margin:0;">{user['cintura']} cm</h2>
-                    </div>
-                    <div>
-                        <p style="color:#888; margin:0;">Largo de Pierna</p>
-                        <h2 style="margin:0;">{user['largo']} cm</h2>
-                    </div>
+            <div style="background-color:white; padding:20px; border-radius:10px; border:1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="color:#4B0082; margin-top:0;">📋 Ficha Técnica Personal</h3>
+                <p><strong>Cargo:</strong> {u['rol']}</p>
+                <hr>
+                <div style="display:grid; grid-template-columns: 1fr 1fr;">
+                    <div><span style="font-size:2rem;">📏 {u['cintura']}</span><br><small>CM CINTURA</small></div>
+                    <div><span style="font-size:2rem;">👖 {u['largo']}</span><br><small>CM LARGO</small></div>
                 </div>
-                <hr style="border-top: 1px solid #eee;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr;">
-                    <div>
-                        <p><strong>Tiro:</strong> {user['tiro']}</p>
-                    </div>
-                    <div>
-                        <p><strong>Preferencia Fit:</strong> {user['fit']}</p>
-                    </div>
-                </div>
-                <p style="margin-top:10px; font-size: 0.9em; color: green;">✅ Patrones listos para corte automático.</p>
+                <br>
+                <p><strong>✂️ Fit Preferido:</strong> {u['fit']}</p>
+                <p style="color:green; font-weight:bold;">✅ Patrones listos para corte automático.</p>
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.info("waiting for input... (Ingrese un ID a la izquierda)")
+            st.info("Esperando ingreso de credenciales...")
 
-# --- CATÁLOGO ---
-elif menu == "👖 Catálogo Técnico":
-    st.title("Colección & Fichas Técnicas")
+# === CATÁLOGO (EL REGLADO) ===
+elif menu == "👖 CATÁLOGO":
+    st.title("Colección 2026")
     
     if st.session_state.usuario:
-        st.success(f"Confeccionando a medida exacta para: **{st.session_state.usuario['nombre']}**")
+        st.info(f"✅ Precios y Tallas ajustados para: **{st.session_state.usuario['nombre']}**")
     else:
-        st.warning("⚠️ Visualizando tallas estándar (Inicie sesión en Locker para activar personalización).")
+        st.warning("⚠️ MODO INVITADO: Se mostrarán precios estándar.")
 
-    tab_std, tab_prem = st.tabs(["LÍNEA ESTÁNDAR (Casual)", "LÍNEA PREMIUM (Sartorial)"])
+    tab_std, tab_prem = st.tabs(["🔹 LÍNEA ESTÁNDAR (Diario)", "🔸 LÍNEA PREMIUM (Ejecutivo)"])
     
     # --- LÍNEA ESTÁNDAR ---
     with tab_std:
-        st.caption("Referencia Tesis: Pág. 115 - Ficha Técnica Gabardina")
-        c1, c2 = st.columns(2)
+        col_a, col_b = st.columns(2)
         
-        # PRODUCTO 1: AZUL MARINO
-        with c1:
-            st.image("https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80", height=300)
-            st.markdown("### Gabardina Spandex - Azul Marino")
-            st.markdown("**Precio: 240 Bs.**")
-            
-            with st.expander("📄 Ver Ficha Técnica (Tesis Pág. 115)"):
-                st.markdown("""
-                - **Composición:** 97% Algodón / 3% Elastano.
-                - **Tejido:** Dril elastizado de alta densidad.
-                - **Forrería:** Popelina 100% Algodón (Anti-transpirante).
-                - **Uso:** Diario / Oficina Casual.
-                """)
-            
-            if st.button("Añadir al Pedido", key="p1"):
-                st.session_state.carrito.append({"Item": "Gabardina Azul Marino", "Linea": "Estándar", "Precio": 240})
-                st.toast("Agregado!")
-
-        # PRODUCTO 2: KAKI
-        with c2:
-            st.image("https://images.unsplash.com/photo-1542272617-0858607c2242?auto=format&fit=crop&w=600&q=80", height=300)
-            st.markdown("### Gabardina Spandex - Kaki / Beige")
-            st.markdown("**Precio: 240 Bs.**")
-            
-            with st.expander("📄 Ver Ficha Técnica (Tesis Pág. 115)"):
-                st.markdown("""
-                - **Composición:** 97% Algodón / 3% Elastano.
-                - **Beneficio:** Confort dinámico (estira al sentarse).
-                - **Forrería:** Popelina 100% Algodón (Evita roturas de bolsillo).
-                - **Uso:** Viernes casual / Universidad.
-                """)
-            
-            if st.button("Añadir al Pedido", key="p2"):
-                st.session_state.carrito.append({"Item": "Gabardina Kaki", "Linea": "Estándar", "Precio": 240})
-                st.toast("Agregado!")
+        # Producto 1
+        with col_a:
+            st.image("https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=500&q=80", use_column_width=True)
+            st.markdown("### Gabardina Spandex (Azul)")
+            st.caption("97% Algodón / 3% Elastano | Forro Popelina 100%")
+            st.markdown("<div class='price-tag'>240 Bs.</div>", unsafe_allow_html=True)
+            if st.button("AGREGAR AL CARRITO", key="btn_std1"):
+                st.session_state.carrito.append({"Item": "Gabardina Azul", "Precio": 240, "Linea": "Estándar"})
+                st.toast("✅ Gabardina agregada")
+        
+        # Producto 2
+        with col_b:
+            st.image("https://images.unsplash.com/photo-1542272617-0858607c2242?auto=format&fit=crop&w=500&q=80", use_column_width=True)
+            st.markdown("### Gabardina Spandex (Kaki)")
+            st.caption("Dril Elastizado | Ideal oficina casual")
+            st.markdown("<div class='price-tag'>240 Bs.</div>", unsafe_allow_html=True)
+            if st.button("AGREGAR AL CARRITO", key="btn_std2"):
+                st.session_state.carrito.append({"Item": "Gabardina Kaki", "Precio": 240, "Linea": "Estándar"})
+                st.toast("✅ Gabardina agregada")
 
     # --- LÍNEA PREMIUM ---
     with tab_prem:
-        st.caption("Referencia Tesis: Pág. 115 - Ficha Técnica Lana Fría")
-        c3, c4 = st.columns(2)
+        col_c, col_d = st.columns(2)
         
-        # PRODUCTO 3: GRIS OXFORD
-        with c3:
-            st.image("https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80", height=300)
-            st.markdown("### Lana Super 100's - Gris Oxford")
-            st.markdown("**Precio: 450 Bs.**")
-            
-            with st.expander("📄 Ver Ficha Técnica (Tesis Pág. 115)"):
-                st.markdown("""
-                - **Composición:** 100% Lana Fría (Super 100's).
-                - **Origen:** Importado (Casimir de alto micronaje).
-                - **Termicidad:** Regulada (Ideal clima de La Paz).
-                - **Forrería:** Popelina 100% Algodón mercerizado.
-                """)
-            
-            if st.button("Añadir al Pedido", key="p3"):
-                st.session_state.carrito.append({"Item": "Lana Super 100's Gris", "Linea": "Premium", "Precio": 450})
-                st.toast("Agregado!")
+        # Producto 3
+        with col_c:
+            st.image("https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=500&q=80", use_column_width=True)
+            st.markdown("### Lana Fría (Super 100's)")
+            st.caption("100% Lana Importada | Termicidad Regulada")
+            st.markdown("<div class='price-tag'>450 Bs.</div>", unsafe_allow_html=True)
+            if st.button("AGREGAR AL CARRITO", key="btn_prm1"):
+                st.session_state.carrito.append({"Item": "Lana Fría Gris", "Precio": 450, "Linea": "Premium"})
+                st.toast("✅ Lana Fría agregada")
         
-        # PRODUCTO 4: TEXTO EXPLICATIVO
-        with c4:
-            st.info("🌟 **Diferenciador de Calidad**")
-            st.markdown("""
-            A diferencia de la competencia que usa forros sintéticos (poliéster) que generan calor y mal olor, 
-            nuestra tesis propone **Forrería de Popelina 100% Algodón** en todas las gamas.
-            
-            Esto garantiza:
-            1. Frescura.
-            2. Durabilidad de los bolsillos.
-            3. Hipoalergénico.
-            """)
+        # Producto 4
+        with col_d:
+            st.image("https://images.unsplash.com/photo-1507680434567-5739c8fbe69d?auto=format&fit=crop&w=500&q=80", use_column_width=True)
+            st.markdown("### Casimir Importado")
+            st.caption("Acabado de lujo | Forrería reforzada")
+            st.markdown("<div class='price-tag'>480 Bs.</div>", unsafe_allow_html=True)
+            if st.button("AGREGAR AL CARRITO", key="btn_prm2"):
+                st.session_state.carrito.append({"Item": "Casimir Importado", "Precio": 480, "Linea": "Premium"})
+                st.toast("✅ Casimir agregado")
 
-# --- CHECKOUT ---
-elif menu == "🛒 Checkout":
+# === CHECKOUT ===
+elif menu == "🛒 MI PEDIDO":
     st.title("Finalizar Compra")
     
     if len(st.session_state.carrito) > 0:
         # Tabla resumen
-        df_cart = pd.DataFrame(st.session_state.carrito)
-        st.table(df_cart)
+        df = pd.DataFrame(st.session_state.carrito)
+        st.table(df)
         
-        total = df_cart['Precio'].sum()
-        st.markdown(f"<h2 style='text-align: right;'>Total: {total} Bs.</h2>", unsafe_allow_html=True)
+        total = df['Precio'].sum()
+        st.markdown(f"## TOTAL A PAGAR: **{total} Bs.**")
         
-        st.markdown("---")
-        st.subheader("🚚 Logística de Entrega (La Paz)")
+        st.divider()
+        st.subheader("Datos de Entrega")
         
-        c_form1, c_form2 = st.columns(2)
-        with c_form1:
-            zona = st.selectbox("Zona de Cobertura:", ["Sopocachi (Gratis)", "Centro", "Miraflores", "Obrajes", "Calacoto", "El Alto"])
-            direccion = st.text_area("Dirección / Referencia:", placeholder="Ej: Edificio Alborada, Piso 3...")
-        with c_form2:
-            pago = st.radio("Método de Pago:", ["QR Simple", "Transferencia", "Efectivo contra-entrega"])
-            celular = st.text_input("WhatsApp de Contacto:", placeholder="70000000")
-
-        if st.button("CONFIRMAR PEDIDO (Simulación)"):
-            if not celular:
-                st.error("Por favor ingrese un número de contacto.")
-            else:
-                # Simulación de proceso
-                with st.spinner('⏳ Verificando stock de tela...'):
-                    time.sleep(1)
-                with st.spinner('📐 Cruzando datos con tu Digital Locker...'):
-                    time.sleep(1)
-                
-                # Éxito
-                order_id = random.randint(1000, 9999)
-                st.balloons()
-                st.success(f"¡Pedido #{order_id} Confirmado!")
-                
-                cliente_nombre = st.session_state.usuario['nombre'] if st.session_state.usuario else "Invitado"
-                
-                st.markdown(f"""
-                <div style="background-color: #d4edda; padding: 20px; border-radius: 10px; border: 1px solid #c3e6cb;">
-                    <h4 style="color: #155724;">Resumen Enviado a Fábrica:</h4>
-                    <ul>
-                        <li><strong>Cliente:</strong> {cliente_nombre}</li>
-                        <li><strong>Items:</strong> {len(st.session_state.carrito)} prendas</li>
-                        <li><strong>Forrería Específica:</strong> Popelina 100% Algodón (Según Ficha Pág. 115)</li>
-                        <li><strong>Entrega:</strong> {zona}</li>
-                    </ul>
-                    <p><em>Gracias por validar el modelo de negocio.</em></p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                st.session_state.carrito = [] # Limpiar
+        c1, c2 = st.columns(2)
+        with c1:
+            st.selectbox("Zona de Envío", ["Sopocachi (Tienda)", "Zona Sur", "Centro", "Miraflores", "El Alto"])
+            st.text_input("Dirección Exacta")
+        with c2:
+            st.radio("Método de Pago", ["QR Simple", "Transferencia", "Efectivo"])
+            st.text_input("WhatsApp de Contacto")
+            
+        if st.button("CONFIRMAR PEDIDO"):
+            with st.spinner("Conectando con Digital Locker..."):
+                time.sleep(1.5)
+            st.balloons()
+            st.success("¡PEDIDO CONFIRMADO!")
+            st.markdown("""
+            > **El sistema ha generado la orden de corte.**
+            > Gracias por confiar en la industria nacional.
+            """)
+            st.session_state.carrito = []
     else:
-        st.info("🛒 Tu carrito está vacío. Ve al Catálogo para seleccionar tus prendas.")
+        st.info("Tu carrito está vacío. Ve al catálogo para añadir productos.")
