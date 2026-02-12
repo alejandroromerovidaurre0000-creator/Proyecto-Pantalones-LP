@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN E IDENTIDAD (OFICIAL)
+# 1. CONFIGURACIÓN E IDENTIDAD (ESTILO APP NATIVA)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,60 +14,69 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# PALETA DE COLORES
-C_BLACK = "#101010"
+# PALETA DE COLORES (Sobria y Comercial)
+C_BLACK = "#111111"
 C_VIOLET = "#6C3483"
-C_GRAY_BG = "#FAFAFA"
+C_WHITE = "#FFFFFF"
 
-# CSS (DISEÑO LIMPIO)
+# CSS (DISEÑO LIMPIO - SIN FONDO NEGRO RARO)
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
     
     .stApp {{
         background-color: #ffffff;
         font-family: 'Roboto', sans-serif;
     }}
     
-    /* LOGO GRANDE */
+    /* HEADER LIMPIO */
     .brand-header {{
         text-align: center;
-        padding: 40px 0;
-        margin-bottom: 30px;
-        background: radial-gradient(circle, #f8f9fa 0%, #ffffff 100%);
-        border-bottom: 1px solid #ddd;
+        padding: 30px 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
     }}
     .brand-name {{
-        font-size: 3.5rem;
+        font-size: 3rem;
         font-weight: 900;
         color: {C_BLACK};
-        letter-spacing: -2px;
-        text-transform: uppercase;
+        letter-spacing: -1px;
         margin: 0;
     }}
     .brand-sub {{
-        font-size: 1.1rem;
-        color: #666;
-        letter-spacing: 4px;
+        font-size: 1rem;
+        color: #777;
+        letter-spacing: 3px;
+        text-transform: uppercase;
         margin-top: 5px;
+    }}
+    
+    /* SIDEBAR MEJORADO (BLANCO Y LIMPIO) */
+    [data-testid="stSidebar"] {{
+        background-color: #f8f9fa;
+        border-right: 1px solid #eee;
+    }}
+    [data-testid="stSidebar"] h3 {{
+        color: {C_BLACK};
+        font-size: 1.2rem;
     }}
     
     /* TARJETAS DE DATOS */
     .info-card {{
         background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        border: 1px solid #eee;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        border: 1px solid #f0f0f0;
     }}
     
     /* CAJAS DE COLOR (SWATCHES) */
     .color-box {{
-        height: 80px;
+        height: 70px;
         width: 100%;
         border-radius: 8px;
         border: 2px solid #e0e0e0;
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         cursor: pointer;
     }}
     
@@ -75,50 +84,50 @@ st.markdown(f"""
     .stButton>button {{
         background-color: {C_BLACK};
         color: white;
-        border-radius: 4px;
-        height: 55px;
+        border-radius: 6px;
+        height: 50px;
         font-weight: 700;
         border: none;
         width: 100%;
         text-transform: uppercase;
         letter-spacing: 1px;
+        transition: 0.3s;
     }}
-    .stButton>button:hover {{ background-color: {C_VIOLET}; }}
+    .stButton>button:hover {{ background-color: {C_VIOLET}; transform: scale(1.01); }}
 
     /* OCULTAR ELEMENTOS EXTRA */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
-    [data-testid="stSidebarNav"] {{display: none !important;}} /* Ocultar nav automática */
     </style>
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# 2. BASE DE DATOS (TRIBUNAL ACADÉMICO)
+# 2. BASE DE DATOS (TRIBUNAL OCULTO)
 # ==============================================================================
-# Datos biométricos + Datos para el Gráfico Radar (Values vs Standard)
+# Datos biométricos + Datos Radar
 DB_CLIENTES = {
     '1001': {
         'nombre': 'Alejandro Romero', 'cargo': 'Fundador',
         'cintura': 82, 'largo': 104, 'cadera': 96, 'muslo': 54, 'tiro': 26, 'rodilla': 42, 'fit': 'Slim Fit',
-        'radar_data': [82, 96, 54, 104, 26] # Datos reales
+        'radar_data': [82, 96, 54, 104, 26]
     },
     '1002': { # Panelista
-        'nombre': 'Samael Gómez Rúa', 'cargo': 'Panelista',
+        'nombre': 'Samael Gómez Rúa', 'cargo': 'Miembro VIP', # VIP para que no diga Panelista en la app
         'cintura': 94, 'largo': 100, 'cadera': 105, 'muslo': 62, 'tiro': 28, 'rodilla': 46, 'fit': 'Regular Comfort',
         'radar_data': [94, 105, 62, 100, 28]
     },
     '1003': { # Tutora
-        'nombre': 'Jessica Susana Daza', 'cargo': 'Tutora',
+        'nombre': 'Jessica Susana Daza', 'cargo': 'Miembro VIP',
         'cintura': 70, 'largo': 95, 'cadera': 92, 'muslo': 50, 'tiro': 24, 'rodilla': 38, 'fit': 'Relaxed Fit',
         'radar_data': [70, 92, 50, 95, 24]
     },
     '1004': { # Relator
-        'nombre': 'Miguel Vidal Sejas', 'cargo': 'Relator',
+        'nombre': 'Miguel Vidal Sejas', 'cargo': 'Miembro VIP',
         'cintura': 88, 'largo': 102, 'cadera': 100, 'muslo': 58, 'tiro': 27, 'rodilla': 44, 'fit': 'Tailored Fit',
         'radar_data': [88, 100, 58, 102, 27]
     }
 }
-# Medidas estándar de referencia (Talla M Promedio) para comparar en el gráfico
+# Medidas estándar ref
 STANDARD_DATA = [84, 98, 56, 100, 26]
 
 if 'carrito' not in st.session_state: st.session_state.carrito = []
@@ -126,26 +135,28 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL (NUEVA NAVEGACIÓN LIMPIA)
+# 3. BARRA LATERAL (LIMPIA Y BLANCA)
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
-    st.markdown("---")
+    st.markdown("<div style='text-align:center; font-size: 60px;'>🧵</div>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; margin-bottom:20px;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     
-    # Botones de navegación manual para control total
+    # Menú de navegación limpio
+    st.write("MENÚ PRINCIPAL")
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
     if st.button("👤 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
-    if st.button("👖 CATÁLOGO & DISEÑO"): st.session_state.page = "CATALOGO"
-    if st.button("🛒 BOLSA DE COMPRAS"): st.session_state.page = "CARRITO"
+    if st.button("👖 DISEÑAR PANTALÓN"): st.session_state.page = "CATALOGO"
+    if st.button("🛒 BOLSA DE COMPRA"): st.session_state.page = "CARRITO"
     
     st.markdown("---")
-    st.caption("**Postulante:** Alejandro M. Romero V.")
     
-    with st.expander("Tribunal Evaluador", expanded=True):
-        st.markdown("• Tutora: Jessica Daza Morales")
-        st.markdown("• Panelista: Samael Gómez Rúa")
-        st.markdown("• Relator: Miguel Vidal Sejas")
+    # Créditos discretos al final (Requisito académico pero sutil)
+    with st.expander("Información Corporativa", expanded=False):
+        st.caption("**Fundador:** Alejandro Romero")
+        st.caption("**Directorio:**")
+        st.caption("Jessica Daza")
+        st.caption("Samael Gómez")
+        st.caption("Miguel Vidal")
 
 # ==============================================================================
 # 4. PÁGINAS DEL SISTEMA
@@ -160,21 +171,23 @@ if st.session_state.page == "INICIO":
     </div>
     """, unsafe_allow_html=True)
     
+    # Dashboard de métricas
     k1, k2, k3 = st.columns(3)
-    k1.metric("Precisión", "99.9%", "Escáner 3D")
-    k2.metric("Entrega", "24 - 48 Hrs", "Express")
-    k3.metric("Materiales", "Certificados", "Alta Gama")
+    k1.metric("Precisión", "99.9%", "Biometría")
+    k2.metric("Entrega", "24 - 48 Hrs", "Producción Local")
+    k3.metric("Calidad", "Certificada", "Alta Gama")
     
     st.divider()
     
     c_txt, c_steps = st.columns([1.5, 1])
     with c_txt:
-        st.markdown("### 💎 LA PROPUESTA DE VALOR")
+        st.markdown("### 💎 NUESTRA VISIÓN")
         st.write("""
         Revolucionamos la industria textil masculina. 
         **No vendemos trajes.** Nos especializamos 100% en el pantalón a medida, eliminando las tallas genéricas.
         """)
-        st.info("✅ **GARANTÍA TÉCNICA (Pág. 115):** Todos nuestros pantalones incluyen forrería de **Popelina 100% Algodón** para máxima frescura e higiene.")
+        # TEXTO CORREGIDO: Sin mención a página 115
+        st.info("✅ **ESTÁNDAR DE CALIDAD:** Todos nuestros pantalones incluyen forrería interna de **Popelina 100% Algodón** para garantizar frescura, hipoalergencia y durabilidad superior.")
     
     with c_steps:
         st.success("1. **DIGITAL LOCKER:** Escaneo de medidas.")
@@ -183,17 +196,18 @@ if st.session_state.page == "INICIO":
 
 # --- PÁGINA: DIGITAL LOCKER (GRÁFICO DE INGENIERÍA) ---
 elif st.session_state.page == "LOCKER":
-    st.markdown("## 🔐 PERFIL BIOMÉTRICO (DIGITAL LOCKER)")
+    st.markdown("## 🔐 DIGITAL LOCKER")
+    st.caption("Base de Datos y Perfil Biométrico.")
     
     col_auth, col_info = st.columns([1, 2.5])
     
     with col_auth:
         st.markdown("#### Identificación")
         id_user = st.text_input("ID Cliente", placeholder="Ej: 1004")
-        if st.button("CONSULTAR BASE DE DATOS"):
+        if st.button("CONSULTAR PERFIL"):
             if id_user in DB_CLIENTES:
                 st.session_state.usuario = DB_CLIENTES[id_user]
-                st.toast(f"Perfil Cargado", icon="✅")
+                st.toast(f"Perfil Cargado Correctamente", icon="✅")
             else:
                 st.error("ID No encontrado.")
     
@@ -205,72 +219,57 @@ elif st.session_state.page == "LOCKER":
             st.markdown(f"""
             <div class="info-card">
                 <h2 style="margin:0; color:#5B2C6F;">{u['nombre']}</h2>
-                <p style="color:#555; letter-spacing:1px; text-transform:uppercase;">{u['cargo']} | ID: {id_user}</p>
+                <p style="color:#555; letter-spacing:1px; text-transform:uppercase;">CLIENTE VERIFICADO | ID: {id_user}</p>
             </div>
             """, unsafe_allow_html=True)
             st.write("")
             
-            # DIAGRAMA DE RADAR (GRÁFICO DE INGENIERÍA)
+            # DIAGRAMA DE RADAR
             c_chart, c_metrics = st.columns([1.2, 1])
             
             with c_chart:
-                st.markdown("#### 📊 Análisis de Morfología vs Estándar")
+                st.markdown("#### 📊 Análisis Morfológico")
                 categories = ['Cintura', 'Cadera', 'Muslo', 'Largo', 'Tiro']
                 
                 fig = go.Figure()
-                # Linea del Cliente
                 fig.add_trace(go.Scatterpolar(
-                      r=u['radar_data'],
-                      theta=categories,
-                      fill='toself',
-                      name=u['nombre'],
-                      line_color='#5B2C6F'
+                      r=u['radar_data'], theta=categories, fill='toself', name='Cliente', line_color='#5B2C6F'
                 ))
-                # Linea Estándar (Comparativa)
                 fig.add_trace(go.Scatterpolar(
-                      r=STANDARD_DATA,
-                      theta=categories,
-                      name='Talla M (Ref)',
-                      line_color='#BDC3C7',
-                      line_dash='dot'
+                      r=STANDARD_DATA, theta=categories, name='Promedio', line_color='#BDC3C7', line_dash='dot'
                 ))
                 fig.update_layout(
                   polar=dict(radialaxis=dict(visible=True, range=[0, 110])),
-                  showlegend=True,
-                  height=350,
-                  margin=dict(l=30, r=30, t=20, b=20)
+                  showlegend=True, height=350, margin=dict(l=30, r=30, t=20, b=20)
                 )
                 st.plotly_chart(fig, use_container_width=True)
-                st.caption("*Este diagrama muestra por qué la ropa estándar no le queda bien al cliente.*")
 
             with c_metrics:
-                st.markdown("#### 📐 Especificaciones Técnicas (cm)")
-                # Métricas detalladas
+                st.markdown("#### 📐 Medidas (cm)")
                 col_a, col_b = st.columns(2)
-                col_a.metric("Cintura", f"{u['cintura']}", "cm")
-                col_b.metric("Largo", f"{u['largo']}", "cm")
-                col_a.metric("Cadera", f"{u['cadera']}", "cm")
-                col_b.metric("Tiro", f"{u['tiro']}", "cm")
-                col_a.metric("Muslo", f"{u['muslo']}", "cm")
-                col_b.metric("Rodilla", f"{u['rodilla']}", "cm")
+                col_a.metric("Cintura", f"{u['cintura']}")
+                col_b.metric("Largo", f"{u['largo']}")
+                col_a.metric("Cadera", f"{u['cadera']}")
+                col_b.metric("Tiro", f"{u['tiro']}")
+                col_a.metric("Muslo", f"{u['muslo']}")
+                col_b.metric("Rodilla", f"{u['rodilla']}")
                 
                 st.success(f"✅ FIT ASIGNADO: **{u['fit']}**")
 
         else:
-            st.info("🔒 Sistema en espera. Ingrese ID para cargar moldería.")
+            st.info("🔒 Sistema en espera. Ingrese ID para cargar datos.")
 
 # --- PÁGINA: CATÁLOGO ---
 elif st.session_state.page == "CATALOGO":
     st.markdown("## 🛠️ CONFIGURADOR DE PRODUCTO")
     
     if st.session_state.usuario:
-        st.caption(f"Configurando para: **{st.session_state.usuario['nombre']}**")
+        st.caption(f"Diseñando para: **{st.session_state.usuario['nombre']}**")
     
-    # SELECCIÓN
     c_config, c_preview = st.columns([1, 1])
     
     with c_config:
-        st.subheader("1. LÍNEA Y PRECIO")
+        st.subheader("1. LÍNEA")
         linea = st.selectbox("Categoría:", ["LÍNEA ESTÁNDAR (Uso Diario)", "LÍNEA PREMIUM (Ejecutivo)"])
         
         precio = 0
@@ -300,12 +299,11 @@ elif st.session_state.page == "CATALOGO":
 
     with c_preview:
         st.subheader("VISTA PREVIA")
-        # Visualización abstracta del color
         st.markdown(f"""
         <div class="info-card" style="text-align:center;">
-            <div class="color-box" style="background-color:{color_hex}; height:200px;"></div>
+            <div class="color-box" style="background-color:{color_hex}; height:180px;"></div>
             <h1 style="color:{C_VIOLET}; margin-top:20px;">{precio} Bs.</h1>
-            <p>{linea}</p>
+            <p><b>{linea}</b></p>
             <p>{tela_sel.split('(')[0]}</p>
             <p>{color_nom}</p>
         </div>
@@ -335,7 +333,7 @@ elif st.session_state.page == "CARRITO":
         c1, c2 = st.columns(2)
         with c1:
             st.selectbox("Zona", ["Sopocachi", "Zona Sur", "Centro", "El Alto"])
-            st.text_area("Dirección Exacta", placeholder="Av. Principal #123, Edificio Azul...")
+            st.text_area("Dirección Exacta", placeholder="Av. Principal #123, Edificio...")
             st.text_input("Referencia Visual", placeholder="Frente a la Farmacia...")
         with c2:
             st.text_input("Celular / WhatsApp")
@@ -350,6 +348,6 @@ elif st.session_state.page == "CARRITO":
                     st.info(f"Orden generada para: {st.session_state.usuario['nombre']}. Entrega en 24-48 hrs.")
                     st.session_state.carrito = []
                 else:
-                    st.error("Por favor, autentíquese en 'PERFIL BIOMÉTRICO' antes de comprar.")
+                    st.error("Por favor, identifíquese en 'PERFIL BIOMÉTRICO' antes de comprar.")
     else:
-        st.warning("Bolsa vacía.")
+        st.info("Su bolsa de compras está vacía.")
