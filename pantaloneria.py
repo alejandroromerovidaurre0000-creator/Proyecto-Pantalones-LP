@@ -1,74 +1,88 @@
 import streamlit as st
 import pandas as pd
 import time
-import random
 
-# --- 1. CONFIGURACIÓN VISUAL (MODO DISEÑO) ---
+# --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
     page_title="Pantalonería Integral | Proyecto de Grado",
-    page_icon="🧵",
+    page_icon="👖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS AVANZADO (DISEÑO LIMPIO Y MINIMALISTA) ---
+# --- 2. ESTILOS VISUALES (MARCA PROPIA) ---
 st.markdown("""
     <style>
-    /* Tipografía y Fondo */
-    .stApp { background-color: #FAFAFA; color: #333; }
-    h1, h2, h3 { font-family: 'Helvetica Neue', sans-serif; font-weight: 300; }
+    /* Fondo limpio */
+    .stApp { background-color: #ffffff; }
     
-    /* Header Personalizado */
-    .brand-header {
+    /* LOGO DIGITAL (Simulado con CSS) */
+    .logo-container {
         text-align: center;
-        padding: 40px;
-        background-color: #111;
+        padding: 20px;
+        background: linear-gradient(90deg, #1a1a1a 0%, #4B0082 100%);
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .brand-name {
         color: white;
-        margin-bottom: 20px;
-        border-radius: 0 0 15px 15px;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+        margin: 0;
+    }
+    .brand-slogan {
+        color: #d1d1d1;
+        font-size: 1rem;
+        font-style: italic;
     }
     
-    /* Tarjetas del Configurador */
-    .config-card {
-        background-color: white;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    /* Tarjetas de Producto */
+    .product-box {
         border: 1px solid #eee;
+        border-radius: 15px;
+        padding: 20px;
+        background: white;
+        transition: transform 0.2s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .product-box:hover {
+        transform: translateY(-5px);
+        border-color: #4B0082;
     }
     
     /* Precios */
-    .price-display {
-        font-size: 2.5rem;
-        font-weight: bold;
+    .price-tag {
         color: #4B0082;
-        text-align: right;
+        font-size: 1.8rem;
+        font-weight: bold;
     }
-    
-    /* Sidebar */
-    [data-testid="stSidebar"] { background-color: #1a1a1a; }
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] p, [data-testid="stSidebar"] span { color: #ccc; }
     
     /* Botones */
     .stButton>button {
         width: 100%;
-        border-radius: 30px;
-        font-weight: 600;
-        background-color: #4B0082;
+        border-radius: 8px;
+        background-color: #1a1a1a;
+        color: white;
         border: none;
-        padding: 12px;
+        padding: 10px;
     }
-    .stButton>button:hover { background-color: #30005a; color: white; }
+    .stButton>button:hover { background-color: #4B0082; }
+    
+    /* Sidebar */
+    [data-testid="stSidebar"] { background-color: #f8f9fa; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. BASE DE DATOS (JURADO) ---
+# --- 3. BASE DE DATOS ROBUSTA ---
 if 'db_clientes' not in st.session_state:
     st.session_state.db_clientes = {
-        '1001': {'nombre': 'Alejandro Romero', 'rol': 'Postulante', 'cintura': 82, 'largo': 104, 'fit': 'Slim', 'historial': 2},
-        '1002': {'nombre': 'Samael Gómez Rúa', 'rol': 'Panelista', 'cintura': 94, 'largo': 100, 'fit': 'Regular', 'historial': 0},
-        '1003': {'nombre': 'Jessica Susana Daza', 'rol': 'Tutora', 'cintura': 70, 'largo': 95, 'fit': 'Relaxed', 'historial': 5},
-        '1004': {'nombre': 'Miguel Vidal Sejas', 'rol': 'Relator', 'cintura': 88, 'largo': 102, 'fit': 'Tailored', 'historial': 1}
+        '1001': {'nombre': 'Alejandro Romero', 'rol': 'Postulante', 'cintura': 82, 'largo': 104, 'fit': 'Slim'},
+        '1002': {'nombre': 'Lic. Samael Gómez', 'rol': 'Panelista', 'cintura': 94, 'largo': 100, 'fit': 'Regular'},
+        '1003': {'nombre': 'Lic. Jessica Daza', 'rol': 'Tutora', 'cintura': 70, 'largo': 95, 'fit': 'Relaxed'},
+        '1004': {'nombre': 'Lic. Miguel Vidal', 'rol': 'Relator', 'cintura': 88, 'largo': 102, 'fit': 'Tailored'}
     }
 
 if 'carrito' not in st.session_state:
@@ -76,238 +90,180 @@ if 'carrito' not in st.session_state:
 if 'usuario' not in st.session_state:
     st.session_state.usuario = None
 
-# --- 4. BARRA LATERAL (CRÉDITOS) ---
+# --- 4. FUNCIÓN INTELIGENTE DE IMÁGENES (CAMBIO DE COLOR) ---
+def obtener_imagen(modelo, color):
+    # Base de datos de URLs por color para simular el cambio
+    # MODELO 1: CHINO / GABARDINA
+    if "Gabardina" in modelo or "Chino" in modelo:
+        if "Azul" in color: return "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80"
+        if "Beige" in color or "Kaki" in color: return "https://images.unsplash.com/photo-1542272617-0858607c2242?auto=format&fit=crop&w=600&q=80"
+        if "Negro" in color: return "https://images.unsplash.com/photo-1517445312882-1dd682bc8d96?auto=format&fit=crop&w=600&q=80"
+        if "Verde" in color: return "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80"
+        return "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80" # Default
+    
+    # MODELO 2: LANA / SEMI FORMAL
+    if "Lana" in modelo or "Sartorial" in modelo:
+        if "Gris" in color: return "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80" # Gris clásico
+        if "Negro" in color: return "https://images.pexels.com/photos/1342609/pexels-photo-1342609.jpeg?auto=compress&cs=tinysrgb&w=600"
+        if "Azul" in color: return "https://images.pexels.com/photos/5325886/pexels-photo-5325886.jpeg?auto=compress&cs=tinysrgb&w=600"
+        return "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80"
+
+    # MODELO 3: CASUAL / 5 POCKETS
+    return "https://images.unsplash.com/photo-1604176354204-9268737828c4?auto=format&fit=crop&w=600&q=80"
+
+# --- 5. INTERFAZ PRINCIPAL ---
+
+# Header con Logo Simulado
+st.markdown("""
+<div class="logo-container">
+    <h1 class="brand-name">PANTALONERÍA INTEGRAL</h1>
+    <p class="brand-slogan">Sastrería Phygital & Personalización</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Sidebar
 with st.sidebar:
-    # Logo conceptual (Icono)
-    st.markdown("<h1 style='text-align: center;'>🧵</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: white;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
-    st.markdown("---")
-    
-    st.markdown("### PROYECTO DE GRADO")
-    st.caption("Ingeniería Comercial - UCB 2026")
-    
-    st.info("**Postulante:** Alejandro Romero Vidaurre")
-    
-    with st.expander("🎓 TRIBUNAL EVALUADOR", expanded=True):
-        st.write("**Tutora:** Jessica Susana Daza Morales")
-        st.write("**Panelista:** Samael Gómez Rúa")
-        st.write("**Relator:** Miguel Vidal Sejas")
-    
-    st.markdown("---")
-    menu = st.radio("NAVEGACIÓN", ["🏠 INICIO", "🔐 DIGITAL LOCKER", "🛠️ PERSONALIZADOR", "🛒 CARRITO"])
-
-# --- 5. LÓGICA DEL SISTEMA ---
-
-# === INICIO ===
-if menu == "🏠 INICIO":
-    # Header Branding
-    st.markdown("""
-    <div class="brand-header">
-        <h1>Sastrería Phygital</h1>
-        <p>Precisión Digital. Confección Artesanal. Solo Pantalones.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Hero Image (Sastrería/Telas, NO trajes)
-    st.image("https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?q=80&w=1200&auto=format&fit=crop", 
-             caption="Taller en Sopocachi | Materiales Premium", use_column_width=True)
+    st.markdown("### PANEL DE CONTROL")
+    menu = st.radio("Ir a:", ["🏠 INICIO", "🔐 DIGITAL LOCKER", "🛠️ PERSONALIZAR", "🛒 CARRITO"])
     
     st.divider()
-    
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown("### 1. Escaneo Único")
-        st.caption("Visítanos una sola vez para digitalizar tus medidas.")
-    with c2:
-        st.markdown("### 2. Configura tu Estilo")
-        st.caption("Elige tela, color y fit desde tu celular.")
-    with c3:
-        st.markdown("### 3. Ajuste Garantizado")
-        st.caption("Sin pruebas intermedias. Te queda o te queda.")
-        
-    st.info("ℹ️ **Para la Defensa:** Ingrese al 'Digital Locker' con el ID **1004** o **1002**.")
+    st.markdown("**PROYECTO DE GRADO**")
+    st.caption("Ingeniería Comercial 2026")
+    st.markdown("**Tribunal:**")
+    st.caption("• Jessica Daza (Tutora)\n• Samael Gómez (Panelista)\n• Miguel Vidal (Relator)")
 
-# === DIGITAL LOCKER ===
+# === 1. INICIO ===
+if menu == "🏠 INICIO":
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.markdown("### Bienvenido a la Nueva Sastrería")
+        st.write("Olvídate de tallas genéricas. Olvídate de los trajes incómodos. Nos especializamos 100% en pantalones a medida con tecnología digital.")
+        
+        st.info("💡 **Diferenciador (Pág 115):** Usamos forrería de Popelina 100% Algodón para evitar sudoración, a diferencia de las marcas comerciales que usan poliéster.")
+        
+    with col2:
+        # Imagen de calidad (Telas/Sastrería)
+        st.image("https://images.unsplash.com/photo-1620799140408-ed5341cd2431?q=80&w=800&auto=format&fit=crop", caption="Materiales Premium y Moldería Digital")
+
+# === 2. DIGITAL LOCKER (CORREGIDO) ===
 elif menu == "🔐 DIGITAL LOCKER":
-    st.title("🔐 Acceso Biométrico")
+    st.subheader("Acceso a Perfil Biométrico")
     
-    c_login, c_info = st.columns([1, 2])
+    c1, c2 = st.columns([1, 2])
     
-    with c_login:
-        st.markdown("### Identificación")
-        id_user = st.text_input("Ingrese ID Cliente:", placeholder="Ej: 1004")
-        if st.button("Buscar Expediente"):
-            if id_user in st.session_state.db_clientes:
-                st.session_state.usuario = st.session_state.db_clientes[id_user]
-                st.toast("Usuario Identificado", icon="✅")
+    with c1:
+        id_user = st.text_input("Ingrese ID (Ej: 1004):")
+        if st.button("BUSCAR PERFIL"):
+            # Lógica corregida con .get() para evitar errores
+            usuario = st.session_state.db_clientes.get(id_user)
+            if usuario:
+                st.session_state.usuario = usuario
+                st.success("¡Perfil Encontrado!")
             else:
-                st.error("ID no encontrado.")
-    
-    with c_info:
+                st.error("ID no existe. Intente con 1002 o 1004.")
+
+    with c2:
         if st.session_state.usuario:
             u = st.session_state.usuario
             st.markdown(f"""
-            <div class="config-card">
-                <h2 style="color:#4B0082; margin:0;">{u['nombre']}</h2>
-                <p style="color:gray;">{u['rol']} | Perfil Verificado</p>
+            <div class="product-box">
+                <h3 style="color:#4B0082">{u['nombre']}</h3>
+                <p><b>Rol:</b> {u['rol']}</p>
                 <hr>
-                <div style="display:flex; justify-content:space-around; text-align:center;">
-                    <div><h1>{u['cintura']}</h1><small>CM CINTURA</small></div>
-                    <div><h1>{u['largo']}</h1><small>CM LARGO</small></div>
-                    <div><h1>{u['fit']}</h1><small>FIT ANATÓMICO</small></div>
+                <div style="display:flex; justify-content:space-between;">
+                    <div><h2>{u['cintura']} cm</h2><small>Cintura</small></div>
+                    <div><h2>{u['largo']} cm</h2><small>Largo</small></div>
+                    <div><h2>{u['fit']}</h2><small>Fit</small></div>
                 </div>
                 <br>
-                <div style="background-color:#e8f5e9; padding:10px; border-radius:5px; color:#2e7d32; font-size:0.8rem;">
-                    ✅ <b>Patrón Digital Generado:</b> Listo para corte automático.
-                </div>
+                <p style="color:green">✅ Medidas digitales verificadas.</p>
             </div>
             """, unsafe_allow_html=True)
-            
-            # Gráfico simple de medidas
-            st.markdown("### 📊 Análisis Morfológico")
-            st.progress(u['cintura'], text="Proporción Cintura")
-            st.progress(u['largo'], text="Proporción Altura")
         else:
-            st.info("Esperando credenciales...")
-            # Imagen de 'Escáner' o 'Huella'
-            st.image("https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80", caption="Sistema de Seguridad de Datos")
+            st.info("Esperando identificación...")
 
-# === PERSONALIZADOR (EL CORE DEL NEGOCIO) ===
-elif menu == "🛠️ PERSONALIZADOR":
-    st.title("Estudio de Diseño")
-    st.markdown("Diseña tu pantalón único. El precio se ajusta según la calidad de la tela.")
+# === 3. PERSONALIZADOR (EL PLATO FUERTE) ===
+elif menu == "🛠️ PERSONALIZAR":
+    st.subheader("Diseña tu Pantalón Único")
     
     if st.session_state.usuario:
-        st.success(f"Confeccionando a medida para: **{st.session_state.usuario['nombre']}**")
+        st.success(f"Configurando medidas para: **{st.session_state.usuario['nombre']}**")
     
-    # 1. ELIGIR MODELO BASE
-    st.subheader("1. Selecciona el Modelo Base")
+    # PASO 1: MODELO
+    col_izq, col_der = st.columns([1, 1])
     
-    # Usamos columnas para mostrar opciones visuales
-    col_model1, col_model2, col_model3 = st.columns(3)
-    
-    modelo_seleccionado = st.radio("Modelo:", 
-        ["Chino Clásico (Oficina)", "5-Pockets (Casual/Jean)", "Sartorial (Vestir/Lana)"], 
-        horizontal=True, label_visibility="collapsed")
-
-    # Mostrar imagen según selección
-    img_url = ""
-    desc_modelo = ""
-    
-    if "Chino" in modelo_seleccionado:
-        # Foto de pantalones doblados o chinos, no traje
-        img_url = "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=800&q=80"
-        desc_modelo = "Bolsillos diagonales. El equilibrio perfecto entre formal y casual."
-        base_price = 180
-    elif "5-Pockets" in modelo_seleccionado:
-        # Foto de texturas de jeans/pantalon
-        img_url = "https://images.unsplash.com/photo-1542272617-0858607c2242?auto=format&fit=crop&w=800&q=80"
-        desc_modelo = "Corte de jean, remaches reforzados. Para el fin de semana."
-        base_price = 160
-    else: # Sartorial
-        # Foto de tela de vestir gris
-        img_url = "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80"
-        desc_modelo = "Corte limpio, sin costuras visibles. Elegancia pura."
-        base_price = 250
-
-    c_img, c_config = st.columns([1, 1])
-    
-    with c_img:
-        st.image(img_url, use_column_width=True)
-        st.caption(desc_modelo)
-        st.info("💡 Todos nuestros pantalones incluyen **Forrería de Popelina 100% Algodón** (Tesis Pág. 115).")
-
-    with c_config:
-        st.markdown('<div class="config-card">', unsafe_allow_html=True)
+    with col_izq:
+        st.markdown("##### 1. Elige el Modelo")
+        modelo = st.selectbox("Tipo de Pantalón:", 
+            ["Chino Gabardina (Uso Diario)", "Sartorial Lana (Semi-Formal)", "5-Pockets (Casual/Fin de semana)"])
         
-        # 2. SELECCIÓN DE TELA
-        st.subheader("2. Personaliza la Tela")
-        tela = st.selectbox("Material:", [
-            "Gabardina Spandex (97% Alg / 3% Elast)", 
-            "Dril Pesado (100% Algodón)", 
-            "Lana Fría Super 100's (Premium)", 
-            "Pana / Corduroy (Invierno)"
-        ])
-        
-        # Lógica de Precios (Tesis)
-        precio_tela = 0
-        mensaje_tela = ""
-        
-        if "Gabardina" in tela:
-            precio_tela = 60 # Costo añadido al base
-            mensaje_tela = "Estándar: Ideal uso diario."
-        elif "Lana" in tela:
-            precio_tela = 200 # Premium
-            mensaje_tela = "Premium: Termicidad regulada y caída perfecta."
-        elif "Pana" in tela:
-            precio_tela = 80
-            mensaje_tela = "Textura clásica para invierno."
+        st.markdown("##### 2. Elige el Color")
+        # Opciones de color dinámicas según modelo
+        opciones_color = []
+        if "Gabardina" in modelo:
+            opciones_color = ["Azul Marino", "Kaki Beige", "Verde Oliva", "Negro"]
+        elif "Lana" in modelo:
+            opciones_color = ["Gris Oxford", "Azul Noche", "Negro Profundo"]
         else:
-            precio_tela = 40
-            mensaje_tela = "Resistente y fresco."
-
-        st.caption(f"ℹ️ {mensaje_tela}")
-        
-        # 3. SELECCIÓN DE COLOR
-        st.subheader("3. Elige el Color")
-        color_opciones = []
-        if "Lana" in tela:
-            color_opciones = ["Gris Oxford", "Negro", "Azul Noche", "Carbón"]
-        elif "Gabardina" in tela:
-            color_opciones = ["Azul Marino", "Kaki / Beige", "Verde Oliva", "Negro"]
-        else:
-            color_opciones = ["Café", "Vino", "Azul", "Gris"]
+            opciones_color = ["Azul Denim", "Café Tierra", "Gris Humo"]
             
-        color = st.selectbox("Tono disponible:", color_opciones)
+        color = st.radio("Tonos Disponibles:", opciones_color, horizontal=True)
         
-        # CÁLCULO FINAL
-        precio_final = base_price + precio_tela
+        st.markdown("##### 3. Elige la Tela")
+        tela = st.selectbox("Material:", ["Estándar", "Premium (Importada)"])
+
+    # LÓGICA DE ACTUALIZACIÓN DE IMAGEN Y PRECIO
+    with col_der:
+        # Obtener URL dinámica
+        img_actual = obtener_imagen(modelo, color)
         
-        st.divider()
-        st.markdown(f"Total: <span class='price-display'>{precio_final} Bs.</span>", unsafe_allow_html=True)
+        # Calcular Precio
+        precio = 200
+        if "Gabardina" in modelo: precio = 240
+        if "Lana" in modelo: precio = 450
+        if tela == "Premium (Importada)" and "Lana" not in modelo: precio += 50
         
-        if st.button("AGREGAR AL PEDIDO"):
-            item = {
-                "Modelo": modelo_seleccionado,
-                "Tela": tela,
-                "Color": color,
-                "Precio": precio_final
-            }
-            st.session_state.carrito.append(item)
+        # Mostrar Tarjeta
+        st.markdown('<div class="product-box">', unsafe_allow_html=True)
+        st.image(img_actual, caption=f"Vista Previa: {color}", use_column_width=True)
+        
+        st.markdown(f"""
+        <div style="text-align:center;">
+            <h3>{modelo}</h3>
+            <p>{color} | Tela {tela}</p>
+            <div class="price-tag">{precio} Bs.</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("AÑADIR AL PEDIDO"):
+            st.session_state.carrito.append({
+                "Modelo": modelo, "Color": color, "Tela": tela, "Precio": precio
+            })
             st.balloons()
-            st.success("¡Pantalón Configurado con Éxito!")
-        
+            st.toast("¡Producto Agregado!")
         st.markdown('</div>', unsafe_allow_html=True)
 
-# === CARRITO ===
+# === 4. CARRITO ===
 elif menu == "🛒 CARRITO":
-    st.title("Finalizar Compra")
+    st.subheader("Finalizar Pedido")
     
     if len(st.session_state.carrito) > 0:
-        st.write("Resumen de tu colección personalizada:")
-        
         df = pd.DataFrame(st.session_state.carrito)
         st.dataframe(df, use_container_width=True)
         
         total = df['Precio'].sum()
-        st.markdown(f"<h1 style='text-align:right;'>Total: {total} Bs.</h1>", unsafe_allow_html=True)
+        st.markdown(f"### Total a Pagar: **{total} Bs.**")
         
-        st.divider()
         c1, c2 = st.columns(2)
         with c1:
-            st.subheader("Entrega")
-            st.selectbox("Zona La Paz", ["Sopocachi", "Zona Sur", "Centro", "Miraflores", "El Alto"])
-            st.text_input("Dirección Exacta")
-        with c2:
-            st.subheader("Contacto")
             st.text_input("WhatsApp")
-            st.radio("Pago", ["QR", "Efectivo"])
-            
-        if st.button("ENVIAR ORDEN A TALLER"):
-            with st.spinner("Procesando medidas del Digital Locker..."):
-                time.sleep(2)
-            st.success("¡PEDIDO CONFIRMADO!")
-            st.info("Tu orden de corte ha sido generada con tus medidas exactas.")
-            st.session_state.carrito = []
+            st.selectbox("Zona Entrega", ["Sopocachi", "Sur", "Centro", "El Alto"])
+        with c2:
+            st.info("Al confirmar, se generará la orden de corte con tus medidas del Digital Locker.")
+            if st.button("CONFIRMAR COMPRA"):
+                with st.spinner("Procesando..."):
+                    time.sleep(2)
+                st.success("¡Pedido Enviado!")
+                st.session_state.carrito = []
     else:
-        st.info("Tu carrito está vacío. Ve al 'Personalizador' para crear tu pantalón.")
+        st.warning("Tu carrito está vacío.")
