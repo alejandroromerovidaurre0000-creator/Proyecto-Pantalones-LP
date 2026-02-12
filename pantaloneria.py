@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 import time
 import random
-from datetime import datetime
 
 # ==============================================================================
-# 1. CONFIGURACIÓN E IDENTIDAD DE MARCA (COMMERCIAL MODE)
+# 1. CONFIGURACIÓN E IDENTIDAD DE MARCA (MODO EMPRESA REAL)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,41 +13,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# COLORES CORPORATIVOS (Elegancia y Tecnología)
-C_BLACK = "#1a1a1a"
-C_GOLD = "#D4AC0D" 
-C_GRAY = "#F4F6F7"
-C_PURPLE = "#5B2C6F" # Toque distintivo
+# COLORES CORPORATIVOS
+C_BLACK = "#0a0a0a"   # Negro Profundo
+C_PURPLE = "#5B2C6F"  # Morado Identidad
+C_GOLD = "#B7950B"    # Dorado Premium
+C_GRAY = "#F8F9F9"    # Fondo Limpio
 
-# CSS PARA GENERAR LA INTERFAZ SIN FOTOS
+# CSS PARA GENERAR LA INTERFAZ SIN FOTOS (ESTILO TESLA/APPLE)
 st.markdown(f"""
     <style>
-    /* FUENTES Y FONDO */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
     
     .stApp {{
         background-color: #ffffff;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Montserrat', sans-serif;
     }}
     
-    /* LOGO TIPOGRÁFICO (Reemplaza imagen) */
+    /* LOGO TIPOGRÁFICO */
     .brand-logo {{
-        font-size: 3rem;
-        font-weight: 900;
-        letter-spacing: -2px;
+        font-size: 3.5rem;
+        font-weight: 800;
+        letter-spacing: -1px;
         color: {C_BLACK};
         text-transform: uppercase;
-        border-bottom: 4px solid {C_PURPLE};
+        border-bottom: 5px solid {C_PURPLE};
         display: inline-block;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }}
     
     /* MUESTRAS DE COLOR (SWATCHES) */
     .color-swatch {{
         width: 100%;
-        height: 120px;
+        height: 100px;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         transition: transform 0.2s;
         border: 2px solid #eee;
         display: flex;
@@ -56,42 +54,43 @@ st.markdown(f"""
         justify-content: center;
         font-weight: bold;
         color: white;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        cursor: pointer;
     }}
-    .color-swatch:hover {{ transform: scale(1.05); border-color: {C_PURPLE}; }}
+    .color-swatch:hover {{ transform: scale(1.03); border-color: {C_PURPLE}; }}
     
     /* TARJETAS DE PRECIO */
     .price-card {{
-        background: #fafafa;
-        padding: 20px;
+        background: {C_GRAY};
+        padding: 25px;
         border-radius: 15px;
-        border-left: 6px solid {C_PURPLE};
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border-left: 8px solid {C_PURPLE};
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }}
     
     /* BOTONES */
     .stButton>button {{
         background-color: {C_BLACK};
         color: white;
-        border-radius: 8px;
+        border-radius: 6px;
         padding: 15px;
-        font-weight: 600;
+        font-weight: 700;
         border: none;
         width: 100%;
         text-transform: uppercase;
+        letter-spacing: 1px;
     }}
     .stButton>button:hover {{ background-color: {C_PURPLE}; }}
 
-    /* ESCONDER ELEMENTOS DE STREAMLIT */
+    /* OCULTAR MARCAS DE AGUA */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
     </style>
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# 2. BASE DE DATOS (CLIENTES REALES / JURADO)
+# 2. BASE DE DATOS (TRIBUNAL OCULTO)
 # ==============================================================================
-# Aquí escondemos los nombres reales para que aparezcan solo al loguearse
 DB_CLIENTES = {
     '1001': {'nombre': 'Alejandro Romero', 'tipo': 'Fundador', 'cintura': 82, 'largo': 104, 'fit': 'Slim'},
     '1002': {'nombre': 'Samael Gómez Rúa', 'tipo': 'Cliente VIP', 'cintura': 94, 'largo': 100, 'fit': 'Regular Comfort'}, # Panelista
@@ -99,76 +98,79 @@ DB_CLIENTES = {
     '1004': {'nombre': 'Miguel Vidal Sejas', 'tipo': 'Cliente VIP', 'cintura': 88, 'largo': 102, 'fit': 'Tailored Fit'} # Relator
 }
 
-# ==============================================================================
-# 3. LÓGICA DE PERSONALIZACIÓN
-# ==============================================================================
-
 if 'carrito' not in st.session_state: st.session_state.carrito = []
 if 'usuario' not in st.session_state: st.session_state.usuario = None
 
-# --- SIDEBAR (Menú Principal) ---
+# ==============================================================================
+# 3. BARRA LATERAL (DATOS ACADÉMICOS)
+# ==============================================================================
 with st.sidebar:
-    st.title("MENÚ PRINCIPAL")
-    opcion = st.radio("", ["INICIO", "DIGITAL LOCKER", "CONFIGURADOR", "CARRITO"])
+    st.markdown("### 🧭 MENÚ PRINCIPAL")
+    opcion = st.radio("", ["INICIO", "DIGITAL LOCKER", "CATÁLOGO & DISEÑO", "CARRITO DE COMPRAS"], label_visibility="collapsed")
     
     st.markdown("---")
     st.caption("© 2026 PANTALONERÍA INTEGRAL")
     st.caption("La Paz, Bolivia")
     
-    # Créditos discretos (Requisito Académico pero sutil)
-    with st.expander("Información Corporativa"):
-        st.write("Fundador: Alejandro M. Romero")
-        st.write("Directorio: Jessica Daza, Samael Gómez, Miguel Vidal.")
+    with st.expander("Información Corporativa", expanded=True):
+        st.markdown("**Fundador:** Alejandro Romero V.")
+        st.markdown("**Directorio:**")
+        st.caption("• Jessica Susana Daza Morales")
+        st.caption("• Samael Gómez Rúa")
+        st.caption("• Miguel Vidal Sejas")
 
 # ==============================================================================
-# 4. PÁGINAS DEL SITIO
+# 4. PÁGINAS DEL SISTEMA
 # ==============================================================================
 
 # --- PÁGINA: INICIO ---
 if opcion == "INICIO":
     st.markdown('<div class="brand-logo">PANTALONERÍA INTEGRAL</div>', unsafe_allow_html=True)
-    st.markdown("### SASTRERÍA DIGITAL & INGENIERÍA TEXTIL")
+    st.markdown("### INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL")
     
-    col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
-    col_kpi1.metric("Precisión de Ajuste", "99.8%", "+ Escaneo 3D")
-    col_kpi2.metric("Tiempos de Entrega", "24 Horas", "Express")
-    col_kpi3.metric("Materiales", "100% Algodón", "Certificado")
+    # KPIs (Corregido: Materiales Certificados en lugar de 100% Algodón)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Precisión de Ajuste", "99.8%", "Escaneo 3D")
+    col2.metric("Entrega", "24 - 48 Hrs", "Producción Local")
+    col3.metric("Materiales", "Certificados", "Nacionales e Importados")
     
     st.divider()
     
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown("#### 💎 NUESTRA PROMESA")
+        st.markdown("#### 💎 PROPUESTA DE VALOR")
         st.write("""
-        Somos la primera marca en Bolivia especializada **exclusivamente en pantalones**.
+        Transformamos la experiencia de compra masculina. 
         
-        Eliminamos los trajes innecesarios y las tallas genéricas (S/M/L) para ofrecerte una prenda construida matemática y anatómicamente para ti.
+        **No vendemos trajes.** No vendemos tallas genéricas. 
+        Vendemos el pantalón perfecto, configurado digitalmente y confeccionado a medida.
         """)
-        st.info("✅ **GARANTÍA DE CALIDAD:** Todos nuestros pantalones incluyen forrería interna de **Popelina 100% Algodón** para evitar la transpiración y alergias (Estándar de calidad superior).")
+        # Nota Técnica Pág 115
+        st.info("✅ **CALIDAD TÉCNICA (Tesis Pág. 115):** Independiente de la tela exterior, todos nuestros pantalones llevan forrería interna de **Popelina 100% Algodón** para garantizar frescura y durabilidad.")
     
     with c2:
-        st.markdown("#### 🚀 CÓMO FUNCIONA")
-        st.success("1. **DIGITAL LOCKER:** Visitamos tu oficina/hogar una sola vez para escanear tus medidas.")
-        st.info("2. **CONFIGURADOR:** Eliges tela, color y corte desde esta web.")
-        st.warning("3. **ENTREGA:** Recibes tu pantalón perfecto al día siguiente.")
+        st.markdown("#### 🚀 PROCESO PHYGITAL")
+        st.success("1. **DIGITAL LOCKER:** Digitalizamos tus medidas en nuestra tienda en Sopocachi.")
+        st.info("2. **CATÁLOGO:** Eliges entre Línea Estándar o Premium desde tu celular.")
+        st.warning("3. **ENTREGA:** Recibes el producto sin necesidad de pruebas físicas.")
 
 # --- PÁGINA: DIGITAL LOCKER ---
 elif opcion == "DIGITAL LOCKER":
     st.markdown("## 🔐 ACCESO BIOMÉTRICO")
-    st.write("Sistema de gestión de moldería personalizada.")
+    st.write("Ingrese ID de Cliente para cargar moldería digital.")
     
     col_input, col_display = st.columns([1, 2])
     
     with col_input:
-        st.text("Ingrese su ID de Cliente:")
+        st.text("ID Cliente:")
         id_user = st.text_input("ID", placeholder="Ej: 1004", label_visibility="collapsed")
         
-        if st.button("AUTENTICAR"):
+        if st.button("AUTENTICAR PERFIL"):
             if id_user in DB_CLIENTES:
                 st.session_state.usuario = DB_CLIENTES[id_user]
-                st.toast("Acceso Concedido", icon="🔓")
+                st.toast(f"Bienvenido {st.session_state.usuario['nombre']}", icon="🔓")
             else:
-                st.error("ID No Reconocido")
+                st.error("ID No Registrado")
                 
     with col_display:
         if st.session_state.usuario:
@@ -176,123 +178,141 @@ elif opcion == "DIGITAL LOCKER":
             
             st.markdown(f"""
             <div class="price-card">
-                <h1 style="color:#5B2C6F; margin:0;">Hola, {u['nombre']}</h1>
-                <p>Nivel: {u['tipo']} | Estado: 🟢 ACTIVO</p>
+                <h2 style="color:#5B2C6F; margin:0;">{u['nombre']}</h2>
+                <p><b>Estado:</b> {u['tipo']} | <b>Medidas:</b> Verificadas</p>
                 <hr>
                 <div style="display:flex; justify-content:space-between; text-align:center;">
-                    <div><h2>{u['cintura']} cm</h2><small>CINTURA</small></div>
-                    <div><h2>{u['largo']} cm</h2><small>LARGO</small></div>
-                    <div><h2>{u['fit']}</h2><small>FIT ANATÓMICO</small></div>
+                    <div><h1>{u['cintura']}</h1><small>CM CINTURA</small></div>
+                    <div><h1>{u['largo']}</h1><small>CM LARGO</small></div>
+                    <div><h1>{u['fit']}</h1><small>FIT PREFERIDO</small></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-            st.success("✅ Sus patrones digitales están cargados y listos para producción.")
+            st.success("✅ Patrones DXF listos para corte automático.")
         else:
-            st.info("🔒 Sistema bloqueado. Ingrese credenciales.")
+            st.info("🔒 Ingrese credenciales para visualizar datos.")
 
-# --- PÁGINA: CONFIGURADOR (SIN IMÁGENES - PURO CÓDIGO) ---
-elif opcion == "CONFIGURADOR":
+# --- PÁGINA: CATÁLOGO & DISEÑO (CORREGIDO: PRECIOS Y LÍNEAS) ---
+elif opcion == "CATÁLOGO & DISEÑO":
     st.markdown("## 🛠️ STUDIO DE DISEÑO")
-    st.write("Personaliza cada detalle. Sin fotos engañosas, solo materiales reales.")
+    st.write("Configuración de producto por Líneas.")
     
     if st.session_state.usuario:
-        st.caption(f"Configurando medidas exactas para: **{st.session_state.usuario['nombre']}**")
+        st.caption(f"Configurando para: **{st.session_state.usuario['nombre']}**")
     
-    # 1. MODELO
-    st.subheader("1. SELECCIONA EL CORTE")
-    modelo = st.selectbox("Modelo:", ["CHINO (Oficina/Diario)", "5-POCKETS (Casual/Jean)", "SARTORIAL (Vestir/Formal)"])
+    # 1. SELECCIÓN DE LÍNEA (CORREGIDO: SOLO ESTÁNDAR Y PREMIUM)
+    st.subheader("1. SELECCIONA LA LÍNEA")
     
-    base_price = 0
-    desc = ""
-    if "CHINO" in modelo: 
-        base_price = 180
-        desc = "Bolsillos sesgados. El estándar moderno."
-    elif "5-POCKETS" in modelo: 
-        base_price = 160
-        desc = "Corte de jean, bolsillos parche."
-    elif "SARTORIAL" in modelo: 
-        base_price = 250
-        desc = "Pretina limpia, sin costura visible. Formal."
-        
-    st.info(f"ℹ️ {desc}")
+    linea = st.selectbox("Categoría:", 
+                         ["LÍNEA ESTÁNDAR (Uso Diario / Oficina)", 
+                          "LÍNEA PREMIUM (Ejecutivo / Sartorial)"])
     
-    # 2. TELA
-    st.subheader("2. SELECCIONA EL MATERIAL")
-    col_telas = st.columns(2)
-    with col_telas[0]:
-        tela = st.radio("Catálogo de Telas:", 
-            ["Gabardina Spandex (97% Algodón)", "Dril Pesado (100% Algodón)", "Lana Fría Super 100's", "Pana (Corduroy)"])
+    # Lógica de Precios y Modelos
+    precio_base = 0
+    telas_disponibles = []
     
-    price_add = 0
-    if "Lana" in tela: price_add = 200
-    if "Pana" in tela: price_add = 50
-    if "Dril" in tela: price_add = 20
-    
-    # 3. COLOR (VISUALIZACIÓN CSS)
-    st.subheader("3. SELECCIONA EL COLOR")
-    
-    # Definimos colores disponibles según tela
-    colores_map = {}
-    if "Gabardina" in tela or "Dril" in tela:
-        colores_map = {"Azul Marino": "#1A237E", "Kaki": "#D7BDE2", "Verde Militar": "#33691E", "Negro": "#000000"}
-    elif "Lana" in tela:
-        colores_map = {"Gris Oxford": "#546E7A", "Negro Profundo": "#212121", "Azul Noche": "#0D47A1"}
+    if "ESTÁNDAR" in linea:
+        precio_base = 200 # CORREGIDO: Empieza en 200
+        desc_linea = "Resistencia y confort para el día a día."
+        telas_disponibles = ["Gabardina Spandex (97% Alg / 3% Elast)", "Dril Confort (Casual)"]
     else:
-        colores_map = {"Camel": "#E67E22", "Café": "#5D4037", "Azul": "#1565C0"}
+        precio_base = 450 # CORREGIDO: Premium
+        desc_linea = "Elegancia superior con telas importadas y acabados a mano."
+        telas_disponibles = ["Lana Fría Super 100's", "Casimir Importado"]
         
-    color_elegido = st.radio("Paleta:", list(colores_map.keys()), horizontal=True)
-    hex_code = colores_map[color_elegido]
+    st.info(f"ℹ️ **{linea}:** {desc_linea}")
     
-    # Renderizar el cuadrado de color (SIN FOTOS)
-    st.markdown(f"""
-    <div class="color-swatch" style="background-color: {hex_code};">
-        {color_elegido}
-    </div>
-    """, unsafe_allow_html=True)
+    col_config = st.columns(2)
     
-    # RESUMEN Y PRECIO
-    precio_final = base_price + price_add
-    
+    # 2. SELECCIÓN DE TELA
+    with col_config[0]:
+        st.subheader("2. MATERIAL (TELA)")
+        tela_elegida = st.radio("Opciones Disponibles:", telas_disponibles)
+        
+        # Ajuste de precio por tela específica (opcional)
+        precio_final = precio_base
+        if "Casimir" in tela_elegida: precio_final += 30 # Casimir un poco más caro que Lana base
+        
+    # 3. SELECCIÓN DE COLOR (SWATCHES CSS)
+    with col_config[1]:
+        st.subheader("3. COLOR")
+        
+        # Mapa de colores según la línea
+        colores_map = {}
+        if "ESTÁNDAR" in linea:
+            colores_map = {
+                "Azul Marino": "#154360", 
+                "Kaki Oficina": "#D6DBDF", 
+                "Verde Oliva": "#1E8449", 
+                "Negro": "#17202A"
+            }
+        else: # PREMIUM
+            colores_map = {
+                "Gris Oxford": "#566573", 
+                "Negro Profundo": "#000000", 
+                "Azul Noche": "#1B2631", 
+                "Arena": "#F5CBA7"
+            }
+            
+        color_nombre = st.radio("Paleta:", list(colores_map.keys()), horizontal=True)
+        color_hex = colores_map[color_nombre]
+        
+        # Renderizar Cuadro de Color
+        st.markdown(f"""
+        <div class="color-swatch" style="background-color: {color_hex};">
+            {color_nombre}
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("---")
-    c_res, c_btn = st.columns([2, 1])
+    
+    # RESUMEN Y BOTÓN
+    c_res, c_btn = st.columns([1, 1])
     
     with c_res:
-        st.markdown(f"### TOTAL: {precio_final} Bs.")
-        st.caption("Incluye impuestos y forrería premium.")
+        st.markdown(f"### PRECIO FINAL: {precio_final} Bs.")
+        st.caption("Incluye impuestos de ley.")
         
     with c_btn:
+        st.write("")
         if st.button("AÑADIR A ORDEN DE CORTE"):
-            st.session_state.carrito.append({
-                "Modelo": modelo, "Tela": tela, "Color": color_elegido, "Precio": precio_final
-            })
+            item = {
+                "Línea": linea,
+                "Tela": tela_elegida,
+                "Color": color_nombre,
+                "Precio": precio_final
+            }
+            st.session_state.carrito.append(item)
             st.balloons()
-            st.success("¡Agregado!")
+            st.success("¡Producto Agregado!")
 
 # --- PÁGINA: CARRITO ---
-elif opcion == "CARRITO":
+elif opcion == "CARRITO DE COMPRAS":
     st.markdown("## 🛒 FINALIZAR PEDIDO")
     
     if len(st.session_state.carrito) > 0:
         df = pd.DataFrame(st.session_state.carrito)
+        
+        # Mostrar tabla limpia
         st.table(df)
         
         total = df['Precio'].sum()
-        st.markdown(f"<h2 style='text-align:right'>PAGAR: {total} Bs.</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='text-align:right; color:#5B2C6F'>TOTAL: {total} Bs.</h1>", unsafe_allow_html=True)
         
         c1, c2 = st.columns(2)
         with c1:
-            st.text_input("WhatsApp")
-            st.selectbox("Zona de Entrega", ["Sopocachi", "Zona Sur", "Centro", "El Alto"])
+            st.text_input("WhatsApp de Contacto")
+            st.selectbox("Zona de Entrega", ["Sopocachi (Gratis)", "Zona Sur", "Centro", "El Alto"])
         with c2:
-            st.write("Método de Pago:")
-            st.selectbox("Seleccione:", ["Transferencia QR", "Efectivo"])
-            
+            st.selectbox("Método de Pago", ["Transferencia QR", "Efectivo Contra-entrega"])
+            st.write("")
             if st.button("CONFIRMAR ORDEN"):
-                with st.spinner("Procesando en Digital Locker..."):
-                    time.sleep(2)
-                st.success("¡PEDIDO ENVIADO!")
-                st.info("El taller ha recibido la orden. Gracias por confiar en la Industria Nacional.")
+                with st.spinner("Conectando con Digital Locker..."):
+                    time.sleep(1.5)
+                st.success("¡PEDIDO ENVIADO AL TALLER!")
+                st.info("Gracias por confiar en Pantalonería Integral.")
                 st.session_state.carrito = []
     else:
-        st.warning("Tu carrito está vacío.")
+        st.warning("Tu carrito está vacío. Ve al Catálogo para configurar tu pantalón.")
+   
