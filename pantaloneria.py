@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN E IDENTIDAD (ESTILO APP NATIVA)
+# 1. CONFIGURACIÓN (ESTILO LIMPIO Y PROFESIONAL)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,12 +14,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# PALETA DE COLORES (Sobria y Comercial)
+# PALETA DE COLORES
 C_BLACK = "#111111"
 C_VIOLET = "#6C3483"
 C_WHITE = "#FFFFFF"
 
-# CSS (DISEÑO LIMPIO - SIN FONDO NEGRO RARO)
+# CSS (DISEÑO LIMPIO - SIN MARCOS NEGROS PESADOS)
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
@@ -29,12 +29,13 @@ st.markdown(f"""
         font-family: 'Roboto', sans-serif;
     }}
     
-    /* HEADER LIMPIO */
+    /* HEADER PRINCIPAL (Limpio) */
     .brand-header {{
         text-align: center;
-        padding: 30px 0;
+        padding: 20px 0;
         margin-bottom: 20px;
         border-bottom: 1px solid #eee;
+        background: white;
     }}
     .brand-name {{
         font-size: 3rem;
@@ -42,23 +43,23 @@ st.markdown(f"""
         color: {C_BLACK};
         letter-spacing: -1px;
         margin: 0;
+        text-transform: uppercase;
     }}
     .brand-sub {{
-        font-size: 1rem;
-        color: #777;
-        letter-spacing: 3px;
+        font-size: 0.9rem;
+        color: #888;
+        letter-spacing: 4px;
         text-transform: uppercase;
         margin-top: 5px;
     }}
     
-    /* SIDEBAR MEJORADO (BLANCO Y LIMPIO) */
+    /* SIDEBAR (LIMPIO Y BLANCO - YA NO NEGRO) */
     [data-testid="stSidebar"] {{
-        background-color: #f8f9fa;
-        border-right: 1px solid #eee;
+        background-color: #fcfcfc;
+        border-right: 1px solid #e0e0e0;
     }}
-    [data-testid="stSidebar"] h3 {{
-        color: {C_BLACK};
-        font-size: 1.2rem;
+    [data-testid="stSidebar"] .block-container {{
+        padding-top: 2rem;
     }}
     
     /* TARJETAS DE DATOS */
@@ -66,7 +67,7 @@ st.markdown(f"""
         background: white;
         padding: 25px;
         border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         border: 1px solid #f0f0f0;
     }}
     
@@ -98,31 +99,31 @@ st.markdown(f"""
     /* OCULTAR ELEMENTOS EXTRA */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
+    [data-testid="stSidebarNav"] {{display: none !important;}} 
     </style>
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# 2. BASE DE DATOS (TRIBUNAL OCULTO)
+# 2. BASE DE DATOS (TRIBUNAL ACADÉMICO)
 # ==============================================================================
-# Datos biométricos + Datos Radar
 DB_CLIENTES = {
     '1001': {
-        'nombre': 'Alejandro Romero', 'cargo': 'Fundador',
+        'nombre': 'Alejandro Romero', 'cargo': 'Postulante',
         'cintura': 82, 'largo': 104, 'cadera': 96, 'muslo': 54, 'tiro': 26, 'rodilla': 42, 'fit': 'Slim Fit',
         'radar_data': [82, 96, 54, 104, 26]
     },
-    '1002': { # Panelista
-        'nombre': 'Samael Gómez Rúa', 'cargo': 'Miembro VIP', # VIP para que no diga Panelista en la app
+    '1002': { 
+        'nombre': 'Samael Gómez Rúa', 'cargo': 'Panelista', 
         'cintura': 94, 'largo': 100, 'cadera': 105, 'muslo': 62, 'tiro': 28, 'rodilla': 46, 'fit': 'Regular Comfort',
         'radar_data': [94, 105, 62, 100, 28]
     },
-    '1003': { # Tutora
-        'nombre': 'Jessica Susana Daza', 'cargo': 'Miembro VIP',
+    '1003': { 
+        'nombre': 'Jessica Susana Daza', 'cargo': 'Tutora',
         'cintura': 70, 'largo': 95, 'cadera': 92, 'muslo': 50, 'tiro': 24, 'rodilla': 38, 'fit': 'Relaxed Fit',
         'radar_data': [70, 92, 50, 95, 24]
     },
-    '1004': { # Relator
-        'nombre': 'Miguel Vidal Sejas', 'cargo': 'Miembro VIP',
+    '1004': { 
+        'nombre': 'Miguel Vidal Sejas', 'cargo': 'Relator',
         'cintura': 88, 'largo': 102, 'cadera': 100, 'muslo': 58, 'tiro': 27, 'rodilla': 44, 'fit': 'Tailored Fit',
         'radar_data': [88, 100, 58, 102, 27]
     }
@@ -135,14 +136,16 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL (LIMPIA Y BLANCA)
+# 3. BARRA LATERAL (MENU LIMPIO Y CARGOS CORRECTOS)
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div style='text-align:center; font-size: 60px;'>🧵</div>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center; margin-bottom:20px;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
+    # Logo minimalista
+    st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; margin-top:0; color:#333;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
+    st.markdown("---")
     
-    # Menú de navegación limpio
-    st.write("MENÚ PRINCIPAL")
+    # Navegación con botones limpios
+    st.caption("NAVEGACIÓN")
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
     if st.button("👤 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
     if st.button("👖 DISEÑAR PANTALÓN"): st.session_state.page = "CATALOGO"
@@ -150,13 +153,14 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Créditos discretos al final (Requisito académico pero sutil)
-    with st.expander("Información Corporativa", expanded=False):
-        st.caption("**Fundador:** Alejandro Romero")
-        st.caption("**Directorio:**")
-        st.caption("Jessica Daza")
-        st.caption("Samael Gómez")
-        st.caption("Miguel Vidal")
+    # CRÉDITOS ACADÉMICOS EXACTOS
+    st.caption("PROYECTO DE GRADO")
+    st.markdown("**Postulante:** Alejandro M. Romero")
+    
+    with st.expander("Tribunal Evaluador", expanded=True):
+        st.markdown("**Tutora:** Jessica Daza Morales")
+        st.markdown("**Panelista:** Samael Gómez Rúa")
+        st.markdown("**Relator:** Miguel Vidal Sejas")
 
 # ==============================================================================
 # 4. PÁGINAS DEL SISTEMA
@@ -171,7 +175,7 @@ if st.session_state.page == "INICIO":
     </div>
     """, unsafe_allow_html=True)
     
-    # Dashboard de métricas
+    # Dashboard
     k1, k2, k3 = st.columns(3)
     k1.metric("Precisión", "99.9%", "Biometría")
     k2.metric("Entrega", "24 - 48 Hrs", "Producción Local")
@@ -186,7 +190,7 @@ if st.session_state.page == "INICIO":
         Revolucionamos la industria textil masculina. 
         **No vendemos trajes.** Nos especializamos 100% en el pantalón a medida, eliminando las tallas genéricas.
         """)
-        # TEXTO CORREGIDO: Sin mención a página 115
+        # Sin mención a tesis, pero resaltando la calidad
         st.info("✅ **ESTÁNDAR DE CALIDAD:** Todos nuestros pantalones incluyen forrería interna de **Popelina 100% Algodón** para garantizar frescura, hipoalergencia y durabilidad superior.")
     
     with c_steps:
@@ -194,7 +198,7 @@ if st.session_state.page == "INICIO":
         st.info("2. **CONFIGURADOR:** Elige tela y color.")
         st.warning("3. **ENTREGA:** En tu puerta en 48 hrs.")
 
-# --- PÁGINA: DIGITAL LOCKER (GRÁFICO DE INGENIERÍA) ---
+# --- PÁGINA: DIGITAL LOCKER ---
 elif st.session_state.page == "LOCKER":
     st.markdown("## 🔐 DIGITAL LOCKER")
     st.caption("Base de Datos y Perfil Biométrico.")
@@ -215,11 +219,11 @@ elif st.session_state.page == "LOCKER":
         if st.session_state.usuario:
             u = st.session_state.usuario
             
-            # Encabezado Perfil
+            # Encabezado Perfil (Mostrando Cargo correctamente)
             st.markdown(f"""
             <div class="info-card">
                 <h2 style="margin:0; color:#5B2C6F;">{u['nombre']}</h2>
-                <p style="color:#555; letter-spacing:1px; text-transform:uppercase;">CLIENTE VERIFICADO | ID: {id_user}</p>
+                <p style="color:#555; letter-spacing:1px; text-transform:uppercase;">{u['cargo']} | ID: {id_user}</p>
             </div>
             """, unsafe_allow_html=True)
             st.write("")
