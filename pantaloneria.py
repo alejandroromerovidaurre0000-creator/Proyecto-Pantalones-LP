@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import time
-import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (MODO "ANTIBUG" REFORZADO)
+# 1. CONFIGURACIÓN VISUAL (MODO ALTO CONTRASTE FORZADO)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -15,110 +14,81 @@ st.set_page_config(
 )
 
 # PALETA DE COLORES
-C_BLACK = "#000000"   # Negro Puro
-C_TEXT_W = "#FFFFFF"  # Blanco Puro
-C_ACCENT = "#5B2C6F"  # Morado
-C_BG_SIDE = "#F2F3F5" # Gris Claro para menú
+C_BLACK = "#000000"
+C_WHITE = "#FFFFFF"
+C_ACCENT = "#5B2C6F"
 
-# CSS BLINDADO (SOLUCIÓN DEFINITIVA A LETRAS INVISIBLES)
+# CSS "NUCLEAR" - FUERZA COLORES SIN IMPORTAR EL MODO DEL DISPOSITIVO
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
     
-    /* 1. FORZAR MODO CLARO GLOBAL (Evita conflicto con Dark Mode del celular) */
+    /* 1. FORZAR FONDO BLANCO GLOBALMENTE */
     .stApp {{
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
+        background-color: {C_WHITE} !important;
+    }}
+    
+    /* 2. FORZAR TEXTO NEGRO EN TODA LA APP (EXCEPTO BOTONES) */
+    h1, h2, h3, h4, h5, h6, p, span, div, label, li {{
+        color: {C_BLACK} !important;
         font-family: 'Montserrat', sans-serif;
     }}
     
-    /* 2. ARREGLO ESPECÍFICO DEL MENÚ LATERAL (SIDEBAR) */
+    /* 3. ARREGLO DEL MENÚ LATERAL (SIDEBAR) */
     [data-testid="stSidebar"] {{
-        background-color: {C_BG_SIDE} !important;
-        border-right: 1px solid #ddd;
+        background-color: #f2f2f2 !important; /* Gris muy claro siempre */
+        border-right: 1px solid #ccc;
+    }}
+    /* Fuerza bruta: TODO dentro del sidebar debe ser negro */
+    [data-testid="stSidebar"] * {{
+        color: {C_BLACK} !important;
     }}
     
-    /* ESTO ES LO QUE ARREGLA LAS LETRAS INVISIBLES EN EL MENU */
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] h3, 
-    [data-testid="stSidebar"] p, 
-    [data-testid="stSidebar"] span, 
-    [data-testid="stSidebar"] div, 
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] .stRadio label p {{
-        color: #000000 !important; /* Fuerza color negro SIEMPRE */
-    }}
-    
-    /* 3. ARREGLAR BOTONES (FONDO NEGRO / LETRA BLANCA) */
+    /* 4. ARREGLO DE BOTONES (FONDO NEGRO - TEXTO BLANCO) */
+    /* Aquí usamos !important para sobreescribir la regla universal de texto negro */
     .stButton > button {{
         background-color: {C_BLACK} !important;
-        color: {C_TEXT_W} !important;
-        border: none !important;
+        color: {C_WHITE} !important; 
         border-radius: 6px !important;
         height: 55px !important;
         font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+        border: none !important;
     }}
     .stButton > button:hover {{
         background-color: {C_ACCENT} !important;
-        color: {C_TEXT_W} !important;
-        transform: translateY(-2px);
+        color: {C_WHITE} !important;
+    }}
+    .stButton > button p {{
+        color: {C_WHITE} !important; /* Asegura que el texto dentro del botón sea blanco */
     }}
     
-    /* 4. ARREGLAR LOS "PUNTITOS" DEL RADIO BUTTON (EL MENÚ) */
-    .stRadio > div[role="radiogroup"] > label {{
-        color: #000000 !important;
-        background-color: transparent !important;
-    }}
-    /* Cuando pasas el mouse por encima */
-    .stRadio > div[role="radiogroup"] > label:hover {{
-        color: {C_ACCENT} !important;
+    /* 5. ARREGLO DE INPUTS (CUADROS DE TEXTO) */
+    /* El fondo del input blanco y el texto que escribes negro */
+    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {{
+        background-color: {C_WHITE} !important;
+        color: {C_BLACK} !important;
+        border: 1px solid #ccc !important;
     }}
     
-    /* 5. HEADER Y TEXTOS */
+    /* 6. HEADER */
     .brand-header {{
-        text-align: center;
-        padding: 30px 0;
-        margin-bottom: 20px;
-        background: white;
-        border-bottom: 2px solid {C_ACCENT};
-    }}
-    .brand-name {{
-        font-size: 3rem;
-        font-weight: 900;
-        color: #000000 !important;
-        margin: 0;
-        letter-spacing: -1px;
-    }}
-    
-    /* 6. TARJETAS */
-    .info-card {{
-        background: #FFFFFF !important;
+        background-color: {C_WHITE};
+        border-bottom: 3px solid {C_ACCENT};
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        border: 1px solid #e0e0e0;
+        text-align: center;
+        margin-bottom: 20px;
     }}
     
-    /* 7. INPUTS (Para que lo que escribas se vea negro) */
-    .stTextInput input, .stTextArea textarea, .stSelectbox div {{
-        color: #000000 !important;
-        background-color: #FFFFFF !important;
+    /* 7. TARJETAS DE INFORMACIÓN */
+    .info-card {{
+        background-color: {C_WHITE} !important;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }}
     
-    /* SWATCHES DE COLOR */
-    .color-box {{
-        height: 70px;
-        width: 100%;
-        border-radius: 8px;
-        border: 2px solid #ccc;
-        cursor: pointer;
-    }}
-
-    /* ELEMENTOS OCULTOS */
+    /* Ocultar elementos nativos */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
     [data-testid="stSidebarNav"] {{display: none !important;}}
@@ -157,11 +127,11 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL (MENU LATERAL)
+# 3. BARRA LATERAL (MENU BLINDADO)
 # ==============================================================================
 with st.sidebar:
     st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center; margin-top:0; color:#000000 !important;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; margin-top:0;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
     # Navegación
@@ -186,8 +156,8 @@ with st.sidebar:
 if st.session_state.page == "INICIO":
     st.markdown("""
     <div class="brand-header">
-        <h1 class="brand-name">PANTALONERÍA INTEGRAL</h1>
-        <p style="color:#666 !important; letter-spacing:2px; margin-top:10px;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
+        <h1 style="font-size: 3rem; font-weight: 900; margin:0;">PANTALONERÍA INTEGRAL</h1>
+        <p style="letter-spacing:2px; margin-top:10px;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -236,7 +206,7 @@ elif st.session_state.page == "LOCKER":
             st.markdown(f"""
             <div class="info-card" style="border-left: 5px solid {C_ACCENT};">
                 <h2 style="margin:0; color:{C_ACCENT} !important;">{u['nombre']}</h2>
-                <p style="color:#555 !important; letter-spacing:1px; text-transform:uppercase;">{u['cargo']} | ID: {id_user}</p>
+                <p style="letter-spacing:1px; text-transform:uppercase;">{u['cargo']} | ID: {id_user}</p>
             </div>
             """, unsafe_allow_html=True)
             st.write("")
@@ -250,10 +220,9 @@ elif st.session_state.page == "LOCKER":
                 fig.add_trace(go.Scatterpolar(r=u['radar_data'], theta=categories, fill='toself', name='Cliente', line_color=C_ACCENT))
                 fig.add_trace(go.Scatterpolar(r=STANDARD_DATA, theta=categories, name='Promedio', line_color='#BDC3C7', line_dash='dot'))
                 fig.update_layout(
-                    polar=dict(radialaxis=dict(visible=True, range=[0, 110])),
+                    polar=dict(radialaxis=dict(visible=True, range=[0, 110]), bgcolor='white'),
                     showlegend=True, height=350, margin=dict(l=30, r=30, t=20, b=20),
-                    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='black') # Forzar texto negro en gráfico
+                    paper_bgcolor='white', font=dict(color='black') 
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
@@ -312,7 +281,7 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("VISTA PREVIA")
         st.markdown(f"""
         <div class="info-card" style="text-align:center;">
-            <div class="color-box" style="background-color:{color_hex};"></div>
+            <div style="height:100px; width:100%; background-color:{color_hex}; border-radius:8px; border:2px solid #ccc;"></div>
             <h1 style="color:{C_ACCENT} !important; margin-top:20px; font-size:3rem;">{precio} Bs.</h1>
             <p><b>{linea}</b></p>
             <p>{tela_sel.split('(')[0]}</p>
@@ -348,7 +317,7 @@ elif st.session_state.page == "CARRITO":
             st.text_area("Dirección Exacta", placeholder="Av. Principal #123, Edificio...")
             st.text_input("Referencia Visual", placeholder="Frente a la Farmacia...")
         with c2:
-            st.text_input("Celular de Contacto")
+            st.text_input("Celular / WhatsApp")
             st.selectbox("Pago", ["Transferencia QR", "Efectivo Contra-entrega"])
             
             st.write("")
