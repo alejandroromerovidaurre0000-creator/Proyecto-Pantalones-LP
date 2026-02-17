@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (MODO ALTO CONTRASTE + OPTIMIZACIÓN MÓVIL)
+# 1. CONFIGURACIÓN VISUAL (MODO "ANTIBUG" PRO)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -18,9 +18,8 @@ st.set_page_config(
 C_BLACK = "#000000"   
 C_WHITE = "#FFFFFF"   
 C_ACCENT = "#5B2C6F"  # Morado elegante
-C_GRAY_LIGHT = "#F2F2F2"
 
-# CSS "NUCLEAR" - FUERZA COLORES SIN IMPORTAR EL MODO DEL DISPOSITIVO
+# CSS BLINDADO (SOLUCIÓN MENU OSCURO + UI LIMPIA)
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
@@ -32,91 +31,75 @@ st.markdown(f"""
         font-family: 'Montserrat', sans-serif;
     }}
     
-    /* 2. FORZAR TEXTO NEGRO EN TODA LA APP (Global) */
+    /* 2. TEXTO NEGRO GLOBAL */
     h1, h2, h3, h4, h5, h6, p, span, div, label, li {{
         color: {C_BLACK} !important;
     }}
     
-    /* 3. ARREGLO DEL MENÚ LATERAL (SIDEBAR) */
+    /* 3. ARREGLO CRÍTICO: MENÚS DESPLEGABLES (SELECTBOX) EN MÓVIL */
+    /* Esto fuerza a que el menú desplegable sea BLANCO con letras NEGRAS */
+    div[data-baseweb="select"] > div {{
+        background-color: {C_WHITE} !important;
+        color: {C_BLACK} !important;
+        border-color: #ccc !important;
+    }}
+    /* El menú que se abre (la lista de opciones) */
+    ul[data-baseweb="menu"] {{
+        background-color: {C_WHITE} !important;
+    }}
+    li[data-baseweb="option"] {{
+        color: {C_BLACK} !important;
+        background-color: {C_WHITE} !important;
+    }}
+    /* El texto seleccionado */
+    div[data-baseweb="select"] span {{
+        color: {C_BLACK} !important;
+    }}
+    
+    /* 4. SIDEBAR (MENÚ LATERAL) */
     [data-testid="stSidebar"] {{
-        background-color: #f8f9fa !important;
-        border-right: 1px solid #e0e0e0;
+        background-color: #f4f4f4 !important;
+        border-right: 1px solid #ccc;
     }}
     [data-testid="stSidebar"] * {{
         color: {C_BLACK} !important;
     }}
     
-    /* --- CORRECCIÓN CLAVE PARA MÓVILES (BOTÓN DEL MENÚ) --- */
-    /* Fuerza que el icono de hamburguesa/flecha sea NEGRO siempre */
-    [data-testid="stSidebarCollapsedControl"] svg, 
-    [data-testid="stSidebarNav"] svg,
-    header svg {{
-        fill: {C_BLACK} !important;
-        color: {C_BLACK} !important;
-    }}
-    /* Asegura que el fondo del header móvil sea blanco */
-    header[data-testid="stHeader"] {{
-        background-color: {C_WHITE} !important;
-    }}
-    
-    /* 4. BOTONES PREMIUM */
+    /* 5. BOTONES PREMIUM */
     .stButton > button {{
         background-color: {C_BLACK} !important;
         color: {C_WHITE} !important; 
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         height: 55px !important;
         font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
         border: none !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-        transition: all 0.3s ease !important;
     }}
     .stButton > button:hover {{
         background-color: {C_ACCENT} !important;
         color: {C_WHITE} !important;
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(91, 44, 111, 0.2) !important;
     }}
     .stButton > button p {{
         color: {C_WHITE} !important; 
     }}
     
-    /* 5. INPUTS CON EFECTO FOCUS "WOW" */
-    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {{
+    /* 6. INPUTS DE TEXTO (SOLUCIÓN FONDO GRIS) */
+    .stTextInput input, .stTextArea textarea {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
         border: 1px solid #ccc !important;
-        border-radius: 8px !important;
-    }}
-    /* Cuando tocas el input, se ilumina morado */
-    .stTextInput input:focus, .stTextArea textarea:focus {{
-        border-color: {C_ACCENT} !important;
-        box-shadow: 0 0 0 2px rgba(91, 44, 111, 0.2) !important;
-    }}
-    
-    /* 6. HEADER DE MARCA */
-    .brand-header {{
-        background-color: {C_WHITE};
-        border-bottom: 3px solid {C_ACCENT};
-        padding: 30px 20px;
-        text-align: center;
-        margin-bottom: 30px;
-        border-radius: 0 0 20px 20px;
-        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
     }}
     
     /* 7. TARJETAS */
     .info-card {{
         background-color: {C_WHITE} !important;
-        border: 1px solid #eee;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        transition: transform 0.3s ease;
-    }}
-    .info-card:hover {{
-        transform: translateY(-5px);
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }}
 
     /* OCULTAR EXTRA */
@@ -158,14 +141,13 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL (NAVEGACIÓN)
+# 3. BARRA LATERAL
 # ==============================================================================
 with st.sidebar:
     st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align:center; margin-top:0;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
-    # Navegación
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
     if st.button("🔐 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
     if st.button("👖 DISEÑAR PANTALÓN"): st.session_state.page = "CATALOGO"
@@ -180,7 +162,7 @@ with st.sidebar:
         st.markdown("• Relator: Miguel Vidal Sejas")
 
 # ==============================================================================
-# 4. PÁGINAS DEL SISTEMA
+# 4. PÁGINAS
 # ==============================================================================
 
 # --- INICIO ---
@@ -188,7 +170,7 @@ if st.session_state.page == "INICIO":
     st.markdown("""
     <div class="brand-header">
         <h1 style="font-size: 3rem; font-weight: 900; margin:0;">PANTALONERÍA INTEGRAL</h1>
-        <p style="letter-spacing:2px; margin-top:10px; font-weight:500;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
+        <p style="letter-spacing:2px; margin-top:10px;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -225,16 +207,6 @@ elif st.session_state.page == "LOCKER":
         id_user = st.text_input("ID Cliente", placeholder="Ej: 1004")
         if st.button("CONSULTAR PERFIL"):
             if id_user in DB_CLIENTES:
-                # Simulación de Escaneo con estilo
-                my_bar = st.progress(0, text="Iniciando escaneo biométrico...")
-                for percent_complete in range(100):
-                    time.sleep(0.015) # Un poco más lento para efecto dramático
-                    if percent_complete == 40: my_bar.progress(percent_complete + 1, text="Verificando medidas...")
-                    if percent_complete == 80: my_bar.progress(percent_complete + 1, text="Cargando moldería...")
-                    my_bar.progress(percent_complete + 1)
-                time.sleep(0.2)
-                my_bar.empty()
-                
                 st.session_state.usuario = DB_CLIENTES[id_user]
                 st.toast(f"Perfil Cargado Correctamente", icon="✅")
             else:
@@ -243,7 +215,6 @@ elif st.session_state.page == "LOCKER":
     with col_info:
         if st.session_state.usuario:
             u = st.session_state.usuario
-            
             st.markdown(f"""
             <div class="info-card" style="border-left: 5px solid {C_ACCENT};">
                 <h2 style="margin:0; color:{C_ACCENT} !important;">{u['nombre']}</h2>
@@ -292,7 +263,6 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("1. LÍNEA")
         linea = st.selectbox("Categoría:", ["LÍNEA ESTÁNDAR (Uso Diario)", "LÍNEA PREMIUM (Ejecutivo)"])
         
-        # LOGICA DE PRECIOS EXACTOS
         opciones_telas = {}
         desc = ""
         
@@ -339,11 +309,17 @@ elif st.session_state.page == "CATALOGO":
         
         st.write("")
         if st.button("AÑADIR A LA BOLSA"):
+            # ANIMACIÓN WOW (Sucesión de Toasts en lugar de globos)
+            st.toast("⚙️ Ajustando moldería digital...", icon="📏")
+            time.sleep(0.8)
+            st.toast("✂️ Realizando corte virtual...", icon="🧵")
+            time.sleep(0.8)
+            st.toast("¡Prenda añadida a la bolsa!", icon="🛍️")
+            
             st.session_state.carrito.append({
                 "Línea": linea, "Tela": nombre_tela_sel, "Color": color_nom, "Precio": precio
             })
-            st.balloons()
-            st.toast("Agregado")
+            st.success("✅ Producto configurado y guardado.")
 
 # --- CARRITO ---
 elif st.session_state.page == "CARRITO":
