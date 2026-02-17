@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (MODO ALTO CONTRASTE TOTAL)
+# 1. CONFIGURACIÓN VISUAL (MODO PLATINUM - ANTI DARK MODE TOTAL)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,126 +14,131 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# PALETA DE COLORES
-C_BLACK = "#000000"   
+# PALETA DE COLORES PREMIUM
+C_BLACK = "#0a0a0a"   
 C_WHITE = "#FFFFFF"   
-C_ACCENT = "#5B2C6F"  # Morado elegante
-C_SIDEBAR_BG = "#F4F6F7"
+C_ACCENT = "#5B2C6F"  # Morado Corporativo
+C_SOFT_BG = "#F9FAFB" # Gris muy tenue para fondos
 
-# CSS NUCLEAR (ESTE CÓDIGO FUERZA EL DISEÑO IGNORANDO TU CELULAR)
+# CSS NUCLEAR V3: CORRECCIÓN DE NOTIFICACIONES Y MENÚS
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
     
-    /* 1. RESET GLOBAL: TODO FONDO BLANCO, TODO TEXTO NEGRO */
-    .stApp, [data-testid="stAppViewContainer"] {{
+    /* 1. RESET GLOBAL: FUENTE PREMIUM Y COLORES */
+    .stApp {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Inter', sans-serif;
     }}
     
-    /* 2. TEXTOS (H1-H6, P, SPAN, LABEL) */
-    h1, h2, h3, h4, h5, h6, p, span, div, label, li, .stMarkdown {{
+    /* 2. TEXTOS GLOBALES EN NEGRO */
+    h1, h2, h3, h4, h5, h6, p, span, div, label, li {{
         color: {C_BLACK} !important;
     }}
     
-    /* 3. ARREGLO DE LA FLECHA DEL MENÚ (EL PROBLEMA QUE TENÍAS) */
-    /* Forzamos al botón del sidebar a ser visible */
-    [data-testid="stSidebarCollapsedControl"] {{
+    /* 3. ARREGLO CRÍTICO: NOTIFICACIONES (TOASTS) */
+    div[data-testid="stToast"] {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
-        border: 1px solid #ddd !important;
-        border-radius: 50% !important;
+        border-left: 6px solid {C_ACCENT} !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+        border-radius: 8px !important;
+        opacity: 1 !important;
     }}
-    [data-testid="stSidebarCollapsedControl"] svg {{
-        fill: {C_BLACK} !important;
+    /* Forzar texto dentro del toast a negro */
+    div[data-testid="stToast"] p, div[data-testid="stToast"] span {{
         color: {C_BLACK} !important;
     }}
     
-    /* 4. SIDEBAR (FONDO GRIS CLARO) */
-    [data-testid="stSidebar"] {{
-        background-color: {C_SIDEBAR_BG} !important;
-        border-right: 1px solid #ccc;
-    }}
-    /* Títulos y textos del sidebar */
-    [data-testid="stSidebar"] * {{
-        color: {C_BLACK} !important;
-    }}
-    
-    /* 5. MENÚS DESPLEGABLES (SELECTBOX) EN MÓVIL (MODO OSCURO FIX) */
-    /* El cuadro cerrado */
+    /* 4. ARREGLO CRÍTICO: MENÚS DESPLEGABLES (SELECTBOX) */
+    /* El contenedor del menú */
     div[data-baseweb="select"] > div {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
-        border: 1px solid #ccc !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 8px !important;
     }}
-    /* La lista desplegable (popover) */
-    div[data-baseweb="popover"], ul[data-baseweb="menu"] {{
+    /* La lista de opciones que se despliega */
+    div[data-baseweb="popover"] {{
         background-color: {C_WHITE} !important;
     }}
-    /* Las opciones dentro de la lista */
+    ul[data-baseweb="menu"] {{
+        background-color: {C_WHITE} !important;
+    }}
+    /* Cada opción individual */
     li[data-baseweb="option"] {{
         color: {C_BLACK} !important;
         background-color: {C_WHITE} !important;
     }}
-    /* Opción seleccionada (hover) */
+    /* Cuando pasas el dedo por encima de una opción */
     li[data-baseweb="option"]:hover, li[aria-selected="true"] {{
-        background-color: {C_ACCENT} !important;
-        color: {C_WHITE} !important;
+        background-color: {C_SOFT_BG} !important;
+        font-weight: bold !important;
     }}
-    /* El texto seleccionado dentro del cuadro */
+    /* El texto seleccionado */
     div[data-baseweb="select"] span {{
         color: {C_BLACK} !important;
     }}
     
-    /* 6. BOTONES (ESTILO PREMIUM) */
+    /* 5. SIDEBAR LIMPIO */
+    [data-testid="stSidebar"] {{
+        background-color: #f8f9fa !important;
+        border-right: 1px solid #eee;
+    }}
+    [data-testid="stSidebar"] * {{
+        color: {C_BLACK} !important;
+    }}
+    /* Arreglo flecha cerrar menú */
+    [data-testid="stSidebarCollapsedControl"] svg {{
+        fill: {C_BLACK} !important;
+    }}
+    
+    /* 6. BOTONES ESTILO SOFTWARE MODERNO */
     .stButton > button {{
         background-color: {C_BLACK} !important;
         color: {C_WHITE} !important; 
         border-radius: 8px !important;
         height: 55px !important;
-        font-weight: 700 !important;
+        font-weight: 600 !important;
         text-transform: uppercase !important;
-        letter-spacing: 1px !important;
+        letter-spacing: 0.5px !important;
         border: none !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        transition: all 0.2s ease !important;
     }}
     .stButton > button:hover {{
         background-color: {C_ACCENT} !important;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(91, 44, 111, 0.3) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(91, 44, 111, 0.2) !important;
     }}
-    /* IMPORTANTE: Texto dentro del botón BLANCO */
     .stButton > button p {{
         color: {C_WHITE} !important; 
     }}
     
-    /* 7. INPUTS (TEXTO QUE ESCRIBES) */
+    /* 7. TARJETAS CON SOMBRA SUAVE (GLASSMORPHISM LITE) */
+    .info-card {{
+        background-color: {C_WHITE} !important;
+        border: 1px solid #f0f0f0;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease;
+    }}
+    .info-card:hover {{
+        transform: translateY(-2px);
+    }}
+    
+    /* 8. INPUTS MEJORADOS */
     .stTextInput input, .stTextArea textarea {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
         border: 1px solid #ccc !important;
         border-radius: 8px !important;
     }}
-    .stTextInput input:focus, .stTextArea textarea:focus {{
-        border-color: {C_ACCENT} !important;
-        box-shadow: 0 0 0 2px rgba(91, 44, 111, 0.2) !important;
-    }}
     
-    /* 8. TARJETAS DE DISEÑO */
-    .info-card {{
-        background-color: {C_WHITE} !important;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }}
-
-    /* OCULTAR BARRA SUPERIOR ROJA/STREAMLIT */
-    header[data-testid="stHeader"] {{
-        background-color: transparent !important;
-    }}
+    /* Ocultar UI de Streamlit */
+    header[data-testid="stHeader"] {{ background: transparent !important; }}
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
     [data-testid="stSidebarNav"] {{display: none !important;}}
@@ -175,7 +180,7 @@ if 'page' not in st.session_state: st.session_state.page = "INICIO"
 # 3. BARRA LATERAL
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center; font-size: 45px;'>🧵</div>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align:center; margin-top:0;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
@@ -200,9 +205,9 @@ with st.sidebar:
 # --- INICIO ---
 if st.session_state.page == "INICIO":
     st.markdown("""
-    <div style="text-align:center; padding:30px 0; border-bottom:3px solid #5B2C6F; margin-bottom:30px;">
-        <h1 style="font-size: 3rem; font-weight: 900; margin:0; line-height:1;">PANTALONERÍA INTEGRAL</h1>
-        <p style="letter-spacing:2px; margin-top:10px; color:#555;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
+    <div style="text-align:center; padding:40px 20px; border-bottom:1px solid #eee; margin-bottom:30px;">
+        <h1 style="font-size: 3rem; font-weight: 900; margin:0; line-height:1.1; letter-spacing:-1px;">PANTALONERÍA INTEGRAL</h1>
+        <p style="letter-spacing:1px; margin-top:15px; color:#555; text-transform:uppercase; font-size:0.9rem;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -225,10 +230,10 @@ if st.session_state.page == "INICIO":
     with c_steps:
         st.markdown("""
         <div class="info-card">
-            <h4>PASOS</h4>
-            <p>1️⃣ <b>Escaneo:</b> Visita única a tienda.</p>
-            <p>2️⃣ <b>Diseño:</b> Elige tela y color.</p>
-            <p>3️⃣ <b>Entrega:</b> En tu puerta.</p>
+            <h4 style="margin-top:0;">PASOS</h4>
+            <p style="margin-bottom:8px;">1️⃣ <b>Escaneo:</b> Visita única a tienda.</p>
+            <p style="margin-bottom:8px;">2️⃣ <b>Diseño:</b> Elige tela y color.</p>
+            <p style="margin-bottom:0;">3️⃣ <b>Entrega:</b> En tu puerta.</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -244,17 +249,17 @@ elif st.session_state.page == "LOCKER":
         id_user = st.text_input("ID Cliente", placeholder="Ej: 1004")
         if st.button("CONSULTAR PERFIL"):
             if id_user in DB_CLIENTES:
-                # Simulación WOW
-                progreso = st.progress(0, text="Conectando base de datos...")
-                for i in range(100):
-                    time.sleep(0.01)
-                    if i == 50: progreso.progress(i + 1, text="Desencriptando biometría...")
-                    else: progreso.progress(i + 1)
-                time.sleep(0.2)
+                # Simulación de carga "Software Caro"
+                progreso = st.progress(0, text="Conectando Servidor Seguro...")
+                time.sleep(0.3)
+                progreso.progress(30, text="Desencriptando Biometría...")
+                time.sleep(0.3)
+                progreso.progress(75, text="Renderizando Moldería...")
+                time.sleep(0.3)
                 progreso.empty()
                 
                 st.session_state.usuario = DB_CLIENTES[id_user]
-                st.toast(f"Perfil Cargado Correctamente", icon="✅")
+                st.toast(f"Acceso concedido a: {st.session_state.usuario['nombre']}", icon="✅")
             else:
                 st.error("ID No encontrado.")
     
@@ -263,9 +268,9 @@ elif st.session_state.page == "LOCKER":
             u = st.session_state.usuario
             
             st.markdown(f"""
-            <div class="info-card" style="border-left: 5px solid {C_ACCENT};">
+            <div class="info-card" style="border-left: 6px solid {C_ACCENT};">
                 <h2 style="margin:0; color:{C_ACCENT} !important;">{u['nombre']}</h2>
-                <p style="letter-spacing:1px; text-transform:uppercase;">{u['cargo']} | ID: {id_user}</p>
+                <p style="letter-spacing:1px; text-transform:uppercase; margin-top:5px; color:#666 !important;">{u['cargo']} | ID: {id_user}</p>
             </div>
             """, unsafe_allow_html=True)
             st.write("")
@@ -346,9 +351,9 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("VISTA PREVIA")
         st.markdown(f"""
         <div class="info-card" style="text-align:center;">
-            <div style="height:120px; width:100%; background-color:{color_hex}; border-radius:8px; border:2px solid #ccc; box-shadow: inset 0 0 20px rgba(0,0,0,0.1);"></div>
-            <h1 style="color:{C_ACCENT} !important; margin-top:20px; font-size:3.5rem;">{precio} Bs.</h1>
-            <p><b>{linea}</b></p>
+            <div style="height:120px; width:100%; background-color:{color_hex}; border-radius:8px; border:2px solid #e0e0e0; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); margin-bottom:20px;"></div>
+            <h1 style="color:{C_ACCENT} !important; margin:0; font-size:3.5rem;">{precio} Bs.</h1>
+            <p style="margin-top:10px;"><b>{linea}</b></p>
             <p>{nombre_tela_sel}</p>
             <p>{color_nom}</p>
         </div>
@@ -356,12 +361,12 @@ elif st.session_state.page == "CATALOGO":
         
         st.write("")
         if st.button("AÑADIR A LA BOLSA"):
-            # ANIMACIÓN DE INGENIERÍA (TOASTS)
-            st.toast("⚙️ Ajustando moldería digital al usuario...", icon="📏")
-            time.sleep(0.8)
-            st.toast("✂️ Realizando corte virtual...", icon="🧵")
-            time.sleep(0.8)
-            st.toast("✅ ¡Producto configurado y guardado!", icon="🛍️")
+            # Secuencia de Notificaciones de Ingeniería (Estilo Software)
+            st.toast("📐 Cargando parámetros biométricos...", icon="👤")
+            time.sleep(0.6)
+            st.toast("✂️ Calculando consumo de tela...", icon="🧵")
+            time.sleep(0.6)
+            st.toast("✅ ¡Ítem agregado a la orden de producción!", icon="🛍️")
             
             st.session_state.carrito.append({
                 "Línea": linea, "Tela": nombre_tela_sel, "Color": color_nom, "Precio": precio
