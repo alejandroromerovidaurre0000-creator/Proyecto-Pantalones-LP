@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (MODO "ANTIBUG" PRO)
+# 1. CONFIGURACIÓN VISUAL (MODO ALTO CONTRASTE TOTAL)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -18,91 +18,122 @@ st.set_page_config(
 C_BLACK = "#000000"   
 C_WHITE = "#FFFFFF"   
 C_ACCENT = "#5B2C6F"  # Morado elegante
+C_SIDEBAR_BG = "#F4F6F7"
 
-# CSS BLINDADO (SOLUCIÓN MENU OSCURO + UI LIMPIA)
+# CSS NUCLEAR (ESTE CÓDIGO FUERZA EL DISEÑO IGNORANDO TU CELULAR)
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
     
-    /* 1. FORZAR FONDO BLANCO GLOBALMENTE */
-    .stApp {{
+    /* 1. RESET GLOBAL: TODO FONDO BLANCO, TODO TEXTO NEGRO */
+    .stApp, [data-testid="stAppViewContainer"] {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
         font-family: 'Montserrat', sans-serif;
     }}
     
-    /* 2. TEXTO NEGRO GLOBAL */
-    h1, h2, h3, h4, h5, h6, p, span, div, label, li {{
+    /* 2. TEXTOS (H1-H6, P, SPAN, LABEL) */
+    h1, h2, h3, h4, h5, h6, p, span, div, label, li, .stMarkdown {{
         color: {C_BLACK} !important;
     }}
     
-    /* 3. ARREGLO CRÍTICO: MENÚS DESPLEGABLES (SELECTBOX) EN MÓVIL */
-    /* Esto fuerza a que el menú desplegable sea BLANCO con letras NEGRAS */
-    div[data-baseweb="select"] > div {{
+    /* 3. ARREGLO DE LA FLECHA DEL MENÚ (EL PROBLEMA QUE TENÍAS) */
+    /* Forzamos al botón del sidebar a ser visible */
+    [data-testid="stSidebarCollapsedControl"] {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
-        border-color: #ccc !important;
+        border: 1px solid #ddd !important;
+        border-radius: 50% !important;
     }}
-    /* El menú que se abre (la lista de opciones) */
-    ul[data-baseweb="menu"] {{
-        background-color: {C_WHITE} !important;
-    }}
-    li[data-baseweb="option"] {{
-        color: {C_BLACK} !important;
-        background-color: {C_WHITE} !important;
-    }}
-    /* El texto seleccionado */
-    div[data-baseweb="select"] span {{
+    [data-testid="stSidebarCollapsedControl"] svg {{
+        fill: {C_BLACK} !important;
         color: {C_BLACK} !important;
     }}
     
-    /* 4. SIDEBAR (MENÚ LATERAL) */
+    /* 4. SIDEBAR (FONDO GRIS CLARO) */
     [data-testid="stSidebar"] {{
-        background-color: #f4f4f4 !important;
+        background-color: {C_SIDEBAR_BG} !important;
         border-right: 1px solid #ccc;
     }}
+    /* Títulos y textos del sidebar */
     [data-testid="stSidebar"] * {{
         color: {C_BLACK} !important;
     }}
     
-    /* 5. BOTONES PREMIUM */
+    /* 5. MENÚS DESPLEGABLES (SELECTBOX) EN MÓVIL (MODO OSCURO FIX) */
+    /* El cuadro cerrado */
+    div[data-baseweb="select"] > div {{
+        background-color: {C_WHITE} !important;
+        color: {C_BLACK} !important;
+        border: 1px solid #ccc !important;
+    }}
+    /* La lista desplegable (popover) */
+    div[data-baseweb="popover"], ul[data-baseweb="menu"] {{
+        background-color: {C_WHITE} !important;
+    }}
+    /* Las opciones dentro de la lista */
+    li[data-baseweb="option"] {{
+        color: {C_BLACK} !important;
+        background-color: {C_WHITE} !important;
+    }}
+    /* Opción seleccionada (hover) */
+    li[data-baseweb="option"]:hover, li[aria-selected="true"] {{
+        background-color: {C_ACCENT} !important;
+        color: {C_WHITE} !important;
+    }}
+    /* El texto seleccionado dentro del cuadro */
+    div[data-baseweb="select"] span {{
+        color: {C_BLACK} !important;
+    }}
+    
+    /* 6. BOTONES (ESTILO PREMIUM) */
     .stButton > button {{
         background-color: {C_BLACK} !important;
         color: {C_WHITE} !important; 
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         height: 55px !important;
         font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
         border: none !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+        transition: all 0.3s ease !important;
     }}
     .stButton > button:hover {{
         background-color: {C_ACCENT} !important;
-        color: {C_WHITE} !important;
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(91, 44, 111, 0.3) !important;
     }}
+    /* IMPORTANTE: Texto dentro del botón BLANCO */
     .stButton > button p {{
         color: {C_WHITE} !important; 
     }}
     
-    /* 6. INPUTS DE TEXTO (SOLUCIÓN FONDO GRIS) */
+    /* 7. INPUTS (TEXTO QUE ESCRIBES) */
     .stTextInput input, .stTextArea textarea {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
         border: 1px solid #ccc !important;
+        border-radius: 8px !important;
+    }}
+    .stTextInput input:focus, .stTextArea textarea:focus {{
+        border-color: {C_ACCENT} !important;
+        box-shadow: 0 0 0 2px rgba(91, 44, 111, 0.2) !important;
     }}
     
-    /* 7. TARJETAS */
+    /* 8. TARJETAS DE DISEÑO */
     .info-card {{
         background-color: {C_WHITE} !important;
-        border: 1px solid #ddd;
-        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
         padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }}
 
-    /* OCULTAR EXTRA */
+    /* OCULTAR BARRA SUPERIOR ROJA/STREAMLIT */
+    header[data-testid="stHeader"] {{
+        background-color: transparent !important;
+    }}
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
     [data-testid="stSidebarNav"] {{display: none !important;}}
@@ -148,6 +179,7 @@ with st.sidebar:
     st.markdown("<h3 style='text-align:center; margin-top:0;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
+    # Navegación
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
     if st.button("🔐 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
     if st.button("👖 DISEÑAR PANTALÓN"): st.session_state.page = "CATALOGO"
@@ -162,15 +194,15 @@ with st.sidebar:
         st.markdown("• Relator: Miguel Vidal Sejas")
 
 # ==============================================================================
-# 4. PÁGINAS
+# 4. PÁGINAS DEL SISTEMA
 # ==============================================================================
 
 # --- INICIO ---
 if st.session_state.page == "INICIO":
     st.markdown("""
-    <div class="brand-header">
-        <h1 style="font-size: 3rem; font-weight: 900; margin:0;">PANTALONERÍA INTEGRAL</h1>
-        <p style="letter-spacing:2px; margin-top:10px;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
+    <div style="text-align:center; padding:30px 0; border-bottom:3px solid #5B2C6F; margin-bottom:30px;">
+        <h1 style="font-size: 3rem; font-weight: 900; margin:0; line-height:1;">PANTALONERÍA INTEGRAL</h1>
+        <p style="letter-spacing:2px; margin-top:10px; color:#555;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -191,9 +223,14 @@ if st.session_state.page == "INICIO":
         st.info("✅ **ESTÁNDAR DE CALIDAD:** Todos nuestros pantalones incluyen forrería interna de **Popelina 100% Algodón** para garantizar frescura, hipoalergencia y durabilidad superior.")
     
     with c_steps:
-        st.success("1. **DIGITAL LOCKER:** Escaneo de medidas.")
-        st.info("2. **CONFIGURADOR:** Elige tela y color.")
-        st.warning("3. **ENTREGA:** En tu puerta en 48 hrs.")
+        st.markdown("""
+        <div class="info-card">
+            <h4>PASOS</h4>
+            <p>1️⃣ <b>Escaneo:</b> Visita única a tienda.</p>
+            <p>2️⃣ <b>Diseño:</b> Elige tela y color.</p>
+            <p>3️⃣ <b>Entrega:</b> En tu puerta.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # --- DIGITAL LOCKER ---
 elif st.session_state.page == "LOCKER":
@@ -207,6 +244,15 @@ elif st.session_state.page == "LOCKER":
         id_user = st.text_input("ID Cliente", placeholder="Ej: 1004")
         if st.button("CONSULTAR PERFIL"):
             if id_user in DB_CLIENTES:
+                # Simulación WOW
+                progreso = st.progress(0, text="Conectando base de datos...")
+                for i in range(100):
+                    time.sleep(0.01)
+                    if i == 50: progreso.progress(i + 1, text="Desencriptando biometría...")
+                    else: progreso.progress(i + 1)
+                time.sleep(0.2)
+                progreso.empty()
+                
                 st.session_state.usuario = DB_CLIENTES[id_user]
                 st.toast(f"Perfil Cargado Correctamente", icon="✅")
             else:
@@ -215,6 +261,7 @@ elif st.session_state.page == "LOCKER":
     with col_info:
         if st.session_state.usuario:
             u = st.session_state.usuario
+            
             st.markdown(f"""
             <div class="info-card" style="border-left: 5px solid {C_ACCENT};">
                 <h2 style="margin:0; color:{C_ACCENT} !important;">{u['nombre']}</h2>
@@ -309,17 +356,16 @@ elif st.session_state.page == "CATALOGO":
         
         st.write("")
         if st.button("AÑADIR A LA BOLSA"):
-            # ANIMACIÓN WOW (Sucesión de Toasts en lugar de globos)
-            st.toast("⚙️ Ajustando moldería digital...", icon="📏")
+            # ANIMACIÓN DE INGENIERÍA (TOASTS)
+            st.toast("⚙️ Ajustando moldería digital al usuario...", icon="📏")
             time.sleep(0.8)
             st.toast("✂️ Realizando corte virtual...", icon="🧵")
             time.sleep(0.8)
-            st.toast("¡Prenda añadida a la bolsa!", icon="🛍️")
+            st.toast("✅ ¡Producto configurado y guardado!", icon="🛍️")
             
             st.session_state.carrito.append({
                 "Línea": linea, "Tela": nombre_tela_sel, "Color": color_nom, "Precio": precio
             })
-            st.success("✅ Producto configurado y guardado.")
 
 # --- CARRITO ---
 elif st.session_state.page == "CARRITO":
