@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import time
+import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (MODO ALTO CONTRASTE FORZADO)
+# 1. CONFIGURACIÓN VISUAL (ALTO CONTRASTE BLINDADO)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,9 +15,9 @@ st.set_page_config(
 )
 
 # PALETA DE COLORES
-C_BLACK = "#000000"
-C_WHITE = "#FFFFFF"
-C_ACCENT = "#5B2C6F"
+C_BLACK = "#000000"   
+C_WHITE = "#FFFFFF"   
+C_ACCENT = "#5B2C6F"  # Morado elegante
 
 # CSS "NUCLEAR" - FUERZA COLORES SIN IMPORTAR EL MODO DEL DISPOSITIVO
 st.markdown(f"""
@@ -26,44 +27,46 @@ st.markdown(f"""
     /* 1. FORZAR FONDO BLANCO GLOBALMENTE */
     .stApp {{
         background-color: {C_WHITE} !important;
+        color: {C_BLACK} !important;
+        font-family: 'Montserrat', sans-serif;
     }}
     
     /* 2. FORZAR TEXTO NEGRO EN TODA LA APP (EXCEPTO BOTONES) */
     h1, h2, h3, h4, h5, h6, p, span, div, label, li {{
         color: {C_BLACK} !important;
-        font-family: 'Montserrat', sans-serif;
     }}
     
     /* 3. ARREGLO DEL MENÚ LATERAL (SIDEBAR) */
     [data-testid="stSidebar"] {{
-        background-color: #f2f2f2 !important; /* Gris muy claro siempre */
+        background-color: #f4f4f4 !important;
         border-right: 1px solid #ccc;
     }}
-    /* Fuerza bruta: TODO dentro del sidebar debe ser negro */
     [data-testid="stSidebar"] * {{
         color: {C_BLACK} !important;
     }}
     
     /* 4. ARREGLO DE BOTONES (FONDO NEGRO - TEXTO BLANCO) */
-    /* Aquí usamos !important para sobreescribir la regla universal de texto negro */
     .stButton > button {{
         background-color: {C_BLACK} !important;
         color: {C_WHITE} !important; 
         border-radius: 6px !important;
         height: 55px !important;
         font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
         border: none !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
     }}
     .stButton > button:hover {{
         background-color: {C_ACCENT} !important;
         color: {C_WHITE} !important;
+        transform: translateY(-2px);
     }}
     .stButton > button p {{
-        color: {C_WHITE} !important; /* Asegura que el texto dentro del botón sea blanco */
+        color: {C_WHITE} !important; 
     }}
     
-    /* 5. ARREGLO DE INPUTS (CUADROS DE TEXTO) */
-    /* El fondo del input blanco y el texto que escribes negro */
+    /* 5. ARREGLO DE INPUTS */
     .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
@@ -79,16 +82,16 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
     
-    /* 7. TARJETAS DE INFORMACIÓN */
+    /* 7. TARJETAS */
     .info-card {{
         background-color: {C_WHITE} !important;
         border: 1px solid #ddd;
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }}
-    
-    /* Ocultar elementos nativos */
+
+    /* OCULTAR EXTRA */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
     [data-testid="stSidebarNav"] {{display: none !important;}}
@@ -127,7 +130,7 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL (MENU BLINDADO)
+# 3. BARRA LATERAL (NAVEGACIÓN)
 # ==============================================================================
 with st.sidebar:
     st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
@@ -211,7 +214,6 @@ elif st.session_state.page == "LOCKER":
             """, unsafe_allow_html=True)
             st.write("")
             
-            # Radar Chart
             c_chart, c_metrics = st.columns([1.2, 1])
             with c_chart:
                 st.markdown("#### 📊 Análisis Morfológico")
@@ -222,7 +224,7 @@ elif st.session_state.page == "LOCKER":
                 fig.update_layout(
                     polar=dict(radialaxis=dict(visible=True, range=[0, 110]), bgcolor='white'),
                     showlegend=True, height=350, margin=dict(l=30, r=30, t=20, b=20),
-                    paper_bgcolor='white', font=dict(color='black') 
+                    paper_bgcolor='white', font=dict(color='black')
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
@@ -252,20 +254,32 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("1. LÍNEA")
         linea = st.selectbox("Categoría:", ["LÍNEA ESTÁNDAR (Uso Diario)", "LÍNEA PREMIUM (Ejecutivo)"])
         
-        precio = 0
-        telas = []
-        if "ESTÁNDAR" in linea:
-            telas = ["Gabardina Spandex (200 Bs.)", "Dril Confort (240 Bs.)"]
-            desc = "Algodón + Elastano. Resistencia diaria."
-        else:
-            telas = ["Lana Fría Super 100's (420 Bs.)", "Casimir Importado (450 Bs.)"]
-            desc = "Telas importadas. Caída perfecta."
+        # LOGICA DE PRECIOS CORREGIDA (DICCIONARIO DIRECTO)
+        # Esto evita el error de sumar "100" al precio.
+        opciones_telas = {}
+        desc = ""
         
+        if "ESTÁNDAR" in linea:
+            opciones_telas = {
+                "Gabardina Spandex (97% Alg)": 220,
+                "Dril Confort (Algodón)": 240
+            }
+            desc = "Tejidos resistentes con elastano."
+        else:
+            opciones_telas = {
+                "Lana Fría Super 100's": 420,
+                "Casimir Importado": 450
+            }
+            desc = "Tejidos nobles importados. Caída sastre."
+            
         st.caption(f"ℹ️ {desc}")
         
         st.subheader("2. MATERIAL")
-        tela_sel = st.radio("Opciones:", telas)
-        precio = int(''.join(filter(str.isdigit, tela_sel)))
+        # El usuario elige el nombre
+        nombre_tela_sel = st.radio("Opciones:", list(opciones_telas.keys()))
+        
+        # El sistema busca el precio exacto en el diccionario
+        precio = opciones_telas[nombre_tela_sel]
         
         st.subheader("3. COLOR")
         colores = {}
@@ -281,10 +295,10 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("VISTA PREVIA")
         st.markdown(f"""
         <div class="info-card" style="text-align:center;">
-            <div style="height:100px; width:100%; background-color:{color_hex}; border-radius:8px; border:2px solid #ccc;"></div>
-            <h1 style="color:{C_ACCENT} !important; margin-top:20px; font-size:3rem;">{precio} Bs.</h1>
+            <div style="height:120px; width:100%; background-color:{color_hex}; border-radius:8px; border:2px solid #ccc;"></div>
+            <h1 style="color:{C_ACCENT} !important; margin-top:20px; font-size:3.5rem;">{precio} Bs.</h1>
             <p><b>{linea}</b></p>
-            <p>{tela_sel.split('(')[0]}</p>
+            <p>{nombre_tela_sel}</p>
             <p>{color_nom}</p>
         </div>
         """, unsafe_allow_html=True)
@@ -292,7 +306,7 @@ elif st.session_state.page == "CATALOGO":
         st.write("")
         if st.button("AÑADIR A LA BOLSA"):
             st.session_state.carrito.append({
-                "Línea": linea, "Tela": tela_sel.split("(")[0], "Color": color_nom, "Precio": precio
+                "Línea": linea, "Tela": nombre_tela_sel, "Color": color_nom, "Precio": precio
             })
             st.balloons()
             st.toast("Agregado")
