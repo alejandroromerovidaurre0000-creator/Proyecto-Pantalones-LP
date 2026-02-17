@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (MODO "UNICORN STARTUP")
+# 1. CONFIGURACIÓN VISUAL (MODO ENTERPRISE - ALTA GAMA)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,144 +14,133 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# PALETA DE COLORES (Minimalismo de Lujo)
-C_BLACK = "#000000"       # Negro Absoluto
-C_DARK_GREY = "#1F2937"   # Gris Carbón (para textos secundarios)
-C_WHITE = "#FFFFFF"       # Blanco Puro
-C_ACCENT = "#5B2C6F"      # Morado Identidad (Sutil)
-C_BG_SOFT = "#FAFAFA"     # Fondo casi blanco
+# PALETA DE COLORES (Minimalismo Corporativo)
+C_BLACK = "#0f172a"       # Azul noche muy oscuro (Más premium que negro puro)
+C_WHITE = "#FFFFFF"       
+C_ACCENT = "#5B2C6F"      # Morado Identidad
+C_SUCCESS = "#059669"     # Verde Esmeralda (Éxito)
+C_BG_LIGHT = "#F8FAFC"    # Gris azulado muy suave
 
-# CSS "QUIRÚRGICO" (Soluciona Dark Mode y Eleva el Diseño)
+# CSS "QUIRÚRGICO" - SOLUCIÓN TOTAL A MODO OSCURO Y DISEÑO PREMIUM
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
     
-    /* --- 1. RESET GLOBAL & TIPOGRAFÍA PREMIUM --- */
+    /* 1. RESET GLOBAL */
     .stApp {{
         background-color: {C_WHITE} !important;
-        font-family: 'Manrope', sans-serif;
+        font-family: 'Inter', sans-serif;
+        color: {C_BLACK} !important;
     }}
     
-    /* Textos globales forzados a oscuro */
+    /* 2. TEXTOS SIEMPRE OSCUROS */
     h1, h2, h3, h4, h5, h6, p, span, div, label, li {{
         color: {C_BLACK} !important;
     }}
     
-    /* --- 2. SOLUCIÓN DEFINITIVA: MENÚS DESPLEGABLES (SELECTBOX) --- */
-    /* El contenedor cerrado */
+    /* 3. MENÚ LATERAL (SIDEBAR) BLINDADO */
+    [data-testid="stSidebar"] {{
+        background-color: {C_BG_LIGHT} !important;
+        border-right: 1px solid #e2e8f0;
+    }}
+    [data-testid="stSidebar"] * {{
+        color: {C_BLACK} !important;
+    }}
+    /* Icono de cerrar menú siempre visible */
+    [data-testid="stSidebarCollapsedControl"] svg {{
+        fill: {C_BLACK} !important;
+    }}
+    
+    /* 4. SOLUCIÓN MENÚS DESPLEGABLES (SELECTBOX) EN MÓVIL */
     div[data-baseweb="select"] > div {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
-        border: 1px solid #E5E7EB !important;
-        border-radius: 12px !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02) !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
     }}
-    /* El texto dentro del select */
-    div[data-baseweb="select"] span {{
-        color: {C_BLACK} !important;
-    }}
-    /* La flechita del dropdown */
-    div[data-baseweb="select"] svg {{
-        fill: {C_BLACK} !important;
-    }}
-    /* LA LISTA FLOTANTE (POPOVER) - Aquí estaba el problema en móviles */
-    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {{
+    div[data-baseweb="popover"], ul[data-baseweb="menu"] {{
         background-color: {C_WHITE} !important;
-        border: 1px solid #E5E7EB !important;
+        border: 1px solid #e2e8f0 !important;
     }}
-    /* Las opciones individuales */
     li[data-baseweb="option"] {{
         color: {C_BLACK} !important;
         background-color: {C_WHITE} !important;
     }}
-    /* Opción al pasar el mouse/dedo */
-    li[data-baseweb="option"]:hover, li[aria-selected="true"] {{
-        background-color: #F3F4F6 !important; /* Gris muy suave */
+    li[data-baseweb="option"]:hover {{
+        background-color: #f1f5f9 !important; /* Highlight suave */
         font-weight: 600 !important;
-        color: {C_ACCENT} !important;
+    }}
+    div[data-baseweb="select"] span {{
+        color: {C_BLACK} !important;
     }}
     
-    /* --- 3. INPUTS DE TEXTO (TEXTAREA / TEXTINPUT) --- */
+    /* 5. BOTONES PREMIUM (NO SHADOWY, FLAT MODERN) */
+    .stButton > button {{
+        background-color: {C_BLACK} !important;
+        color: {C_WHITE} !important; 
+        border-radius: 8px !important;
+        height: 55px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
+        border: none !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }}
+    .stButton > button:hover {{
+        background-color: {C_ACCENT} !important;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(91, 44, 111, 0.3) !important;
+    }}
+    .stButton > button p {{
+        color: {C_WHITE} !important; 
+    }}
+    
+    /* 6. INPUTS DE TEXTO LIMPIOS */
     .stTextInput input, .stTextArea textarea {{
         background-color: {C_WHITE} !important;
         color: {C_BLACK} !important;
-        border: 1px solid #E5E7EB !important;
-        border-radius: 12px !important;
-        padding: 15px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
     }}
     .stTextInput input:focus, .stTextArea textarea:focus {{
         border-color: {C_ACCENT} !important;
         box-shadow: 0 0 0 3px rgba(91, 44, 111, 0.1) !important;
     }}
     
-    /* --- 4. SIDEBAR DE LUJO --- */
-    [data-testid="stSidebar"] {{
-        background-color: {C_BG_SOFT} !important;
-        border-right: 1px solid #F0F0F0;
+    /* 7. TARJETAS "ENTERPRISE" */
+    .enterprise-card {{
+        background-color: {C_WHITE} !important;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
     }}
-    [data-testid="stSidebar"] * {{
-        color: {C_BLACK} !important;
-    }}
-    /* Icono de cerrar menú sidebar */
-    [data-testid="stSidebarCollapsedControl"] svg {{
-        fill: {C_BLACK} !important;
-    }}
-    
-    /* --- 5. TARJETAS "GLASS" (CARD) --- */
-    .premium-card {{
-        background: {C_WHITE};
-        border: 1px solid #F3F4F6;
-        border-radius: 24px; /* Bordes muy redondos */
-        padding: 30px;
-        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08); /* Sombra difusa premium */
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        margin-bottom: 20px;
-    }}
-    .premium-card:hover {{
-        transform: translateY(-5px);
-        box-shadow: 0 30px 60px -12px rgba(91, 44, 111, 0.15);
-        border-color: {C_ACCENT};
+    .enterprise-card:hover {{
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }}
     
-    /* --- 6. BOTONES DE ALTA GAMA --- */
-    .stButton > button {{
-        background-color: {C_BLACK} !important;
-        color: {C_WHITE} !important;
-        border-radius: 14px !important;
-        height: 60px !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        border: none !important;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        width: 100%;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-    }}
-    .stButton > button:hover {{
-        background-color: {C_ACCENT} !important;
-        box-shadow: 0 15px 30px rgba(91, 44, 111, 0.3) !important;
-        transform: translateY(-2px);
-    }}
-    .stButton > button p {{ color: {C_WHITE} !important; }}
-    
-    /* --- 7. HEADER MINIMALISTA --- */
-    .brand-header {{
+    /* 8. RECIBO DIGITAL (SUCCESS) */
+    .digital-receipt {{
+        background-color: #F0FDF4; /* Verde muy claro */
+        border: 1px solid #BBF7D0;
+        border-radius: 12px;
+        padding: 25px;
         text-align: center;
-        padding: 40px 0;
-        margin-bottom: 40px;
+        margin-top: 20px;
     }}
-    .brand-title {{
-        font-size: 3.5rem;
+    .receipt-title {{
+        color: #15803D !important; /* Verde oscuro */
         font-weight: 800;
-        letter-spacing: -2px;
-        margin: 0;
-        background: -webkit-linear-gradient(45deg, #000, #434343);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
     }}
-    
-    /* OCULTAR UI STREAMLIT */
+    .receipt-text {{
+        color: #166534 !important;
+        margin: 5px 0;
+    }}
+
+    /* Ocultar UI de Streamlit */
     header[data-testid="stHeader"] {{ background: transparent !important; }}
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
@@ -195,14 +184,14 @@ if 'page' not in st.session_state: st.session_state.page = "INICIO"
 # ==============================================================================
 with st.sidebar:
     st.markdown("<div style='text-align:center; margin-bottom:20px; font-size: 40px;'>🧵</div>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align:center; margin:0; letter-spacing:1px;'>PANTALONERÍA<br>INTEGRAL</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align:center; margin:0; letter-spacing:1px; font-weight:700;'>PANTALONERÍA<br>INTEGRAL</h4>", unsafe_allow_html=True)
     st.markdown("---")
     
     # Navegación
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
     if st.button("🔐 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
-    if st.button("🛠️ ATELIER DIGITAL"): st.session_state.page = "CATALOGO"
-    if st.button("🛍️ MI BOLSA"): st.session_state.page = "CARRITO"
+    if st.button("🎨 CATÁLOGO & DISEÑO"): st.session_state.page = "CATALOGO"
+    if st.button("🛍️ BOLSA DE COMPRA"): st.session_state.page = "CARRITO"
     
     st.markdown("---")
     st.caption("**Postulante:** Alejandro M. Romero")
@@ -219,9 +208,9 @@ with st.sidebar:
 # --- INICIO ---
 if st.session_state.page == "INICIO":
     st.markdown("""
-    <div class="brand-header">
-        <h1 class="brand-title">PANTALONERÍA INTEGRAL</h1>
-        <p style="letter-spacing:3px; margin-top:10px; color:#555 !important; font-weight:600;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
+    <div style="text-align:center; padding:40px 20px; border-bottom:1px solid #eee; margin-bottom:40px;">
+        <h1 style="font-size: 3.2rem; font-weight: 800; margin:0; line-height:1.1; letter-spacing:-1px;">PANTALONERÍA INTEGRAL</h1>
+        <p style="letter-spacing:2px; margin-top:10px; color:#555 !important; font-size:0.9rem; font-weight:500;">INGENIERÍA DE CONFORT & SASTRERÍA DIGITAL</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -230,25 +219,25 @@ if st.session_state.page == "INICIO":
     
     with col_kpi1:
         st.markdown("""
-        <div class="premium-card" style="text-align:center">
+        <div class="enterprise-card" style="text-align:center">
             <h2 style="color:#5B2C6F !important; font-size:2.5rem; margin:0;">99.9%</h2>
-            <p style="margin:0; font-size:0.9rem; text-transform:uppercase;">Precisión Biométrica</p>
+            <p style="margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:600;">Precisión Biométrica</p>
         </div>
         """, unsafe_allow_html=True)
         
     with col_kpi2:
         st.markdown("""
-        <div class="premium-card" style="text-align:center">
-            <h2 style="color:#111 !important; font-size:2.5rem; margin:0;">24-48h</h2>
-            <p style="margin:0; font-size:0.9rem; text-transform:uppercase;">Producción Local</p>
+        <div class="enterprise-card" style="text-align:center">
+            <h2 style="color:#0f172a !important; font-size:2.5rem; margin:0;">24-48h</h2>
+            <p style="margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:600;">Entrega Express</p>
         </div>
         """, unsafe_allow_html=True)
         
     with col_kpi3:
         st.markdown("""
-        <div class="premium-card" style="text-align:center">
-            <h2 style="color:#111 !important; font-size:2.5rem; margin:0;">100%</h2>
-            <p style="margin:0; font-size:0.9rem; text-transform:uppercase;">Material Certificado</p>
+        <div class="enterprise-card" style="text-align:center">
+            <h2 style="color:#0f172a !important; font-size:2.5rem; margin:0;">100%</h2>
+            <p style="margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:600;">Calidad Certificada</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -266,11 +255,11 @@ if st.session_state.page == "INICIO":
     
     with c_steps:
         st.markdown("""
-        <div class="premium-card">
-            <h4 style="margin-top:0;">CÓMO FUNCIONA</h4>
+        <div class="enterprise-card">
+            <h4 style="margin-top:0;">FLUJO DEL USUARIO</h4>
             <div style="margin-top:15px;">
                 <p><b>1. DIGITAL LOCKER</b><br><span style="font-size:0.85rem; color:#666 !important;">Escaneo biométrico único.</span></p>
-                <p><b>2. ATELIER</b><br><span style="font-size:0.85rem; color:#666 !important;">Configuración de tela y diseño.</span></p>
+                <p><b>2. CATÁLOGO</b><br><span style="font-size:0.85rem; color:#666 !important;">Configuración de tela y diseño.</span></p>
                 <p><b>3. ENTREGA</b><br><span style="font-size:0.85rem; color:#666 !important;">En tu puerta en 48 hrs.</span></p>
             </div>
         </div>
@@ -289,7 +278,7 @@ elif st.session_state.page == "LOCKER":
         if st.button("ACCEDER AL SISTEMA"):
             if id_user in DB_CLIENTES:
                 # Animación de carga técnica
-                progreso = st.progress(0, text="Estableciendo conexión segura...")
+                progreso = st.progress(0, text="Conectando Servidor Seguro...")
                 time.sleep(0.3)
                 progreso.progress(45, text="Desencriptando parámetros corporales...")
                 time.sleep(0.3)
@@ -307,7 +296,7 @@ elif st.session_state.page == "LOCKER":
             u = st.session_state.usuario
             
             st.markdown(f"""
-            <div class="premium-card" style="border-left: 8px solid {C_ACCENT};">
+            <div class="enterprise-card" style="border-left: 8px solid {C_ACCENT};">
                 <h2 style="margin:0; color:{C_ACCENT} !important;">{u['nombre']}</h2>
                 <p style="letter-spacing:2px; text-transform:uppercase; margin-top:5px; font-size:0.8rem; color:#555 !important;">
                     {u['cargo']} • ID: {id_user} • ESTADO: ACTIVO
@@ -321,17 +310,16 @@ elif st.session_state.page == "LOCKER":
                 categories = ['Cintura', 'Cadera', 'Muslo', 'Largo', 'Tiro']
                 fig = go.Figure()
                 fig.add_trace(go.Scatterpolar(r=u['radar_data'], theta=categories, fill='toself', name='Cliente', line_color=C_ACCENT))
-                fig.add_trace(go.Scatterpolar(r=STANDARD_DATA, theta=categories, name='Promedio', line_color='#BDC3C7', line_dash='dot'))
+                fig.add_trace(go.Scatterpolar(r=STANDARD_DATA, theta=categories, name='Promedio', line_color='#94a3b8', line_dash='dot'))
                 fig.update_layout(
                     polar=dict(radialaxis=dict(visible=True, range=[0, 110]), bgcolor='white'),
                     showlegend=True, height=350, margin=dict(l=40, r=40, t=20, b=20),
-                    paper_bgcolor='rgba(0,0,0,0)', font=dict(color='black', family="Manrope")
+                    paper_bgcolor='rgba(0,0,0,0)', font=dict(color='black', family="Inter")
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
             with c_metrics:
                 st.markdown("#### 📐 Cotas (cm)")
-                # Métricas en formato limpio
                 col_a, col_b = st.columns(2)
                 col_a.metric("Cintura", u['cintura'])
                 col_b.metric("Largo", u['largo'])
@@ -346,7 +334,7 @@ elif st.session_state.page == "LOCKER":
 
 # --- CATÁLOGO ---
 elif st.session_state.page == "CATALOGO":
-    st.markdown("## 🛠️ ATELIER DIGITAL")
+    st.markdown("## 🛠️ CONFIGURADOR DE PRODUCTO")
     
     if st.session_state.usuario:
         st.caption(f"Diseñando para: **{st.session_state.usuario['nombre']}**")
@@ -354,7 +342,7 @@ elif st.session_state.page == "CATALOGO":
     c_config, c_preview = st.columns([1, 1])
     
     with c_config:
-        st.subheader("1. SELECCIONA LÍNEA")
+        st.subheader("1. LÍNEA")
         linea = st.selectbox("Categoría:", ["LÍNEA ESTÁNDAR (Uso Diario)", "LÍNEA PREMIUM (Ejecutivo)"])
         
         opciones_telas = {}
@@ -382,9 +370,9 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("3. ACABADO (COLOR)")
         colores = {}
         if "ESTÁNDAR" in linea:
-            colores = {"Azul Navy": "#1B2631", "Kaki Oficina": "#D0D3D4", "Verde Olivo": "#4D5645"}
+            colores = {"Azul Navy": "#1e293b", "Kaki Oficina": "#cbd5e1", "Verde Olivo": "#3f6212"}
         else:
-            colores = {"Gris Oxford": "#566573", "Negro Profundo": "#000000", "Azul Noche": "#154360"}
+            colores = {"Gris Oxford": "#334155", "Negro Profundo": "#020617", "Azul Noche": "#0f172a"}
             
         color_nom = st.radio("Paleta:", list(colores.keys()), horizontal=True)
         color_hex = colores[color_nom]
@@ -392,11 +380,11 @@ elif st.session_state.page == "CATALOGO":
     with c_preview:
         st.subheader("VISTA PREVIA")
         st.markdown(f"""
-        <div class="premium-card" style="text-align:center;">
-            <div style="height:150px; width:100%; background-color:{color_hex}; border-radius:12px; border:1px solid #e0e0e0; margin-bottom:25px; box-shadow:inset 0 0 40px rgba(0,0,0,0.05);"></div>
+        <div class="enterprise-card" style="text-align:center;">
+            <div style="height:150px; width:100%; background-color:{color_hex}; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:25px; box-shadow:inset 0 0 40px rgba(0,0,0,0.05);"></div>
             <h1 style="color:{C_ACCENT} !important; margin:0; font-size:4rem; line-height:1;">{precio} Bs.</h1>
-            <p style="color:#999 !important; font-size:0.9rem; margin-bottom:20px;">PRECIO FINAL</p>
-            <div style="text-align:left; background-color:#f9f9f9; padding:15px; border-radius:10px;">
+            <p style="color:#64748b !important; font-size:0.9rem; margin-bottom:20px;">PRECIO FINAL</p>
+            <div style="text-align:left; background-color:#f8fafc; padding:15px; border-radius:10px; border:1px solid #e2e8f0;">
                 <p style="margin:5px 0;">🏷️ <b>Línea:</b> {linea.split('(')[0]}</p>
                 <p style="margin:5px 0;">🧵 <b>Tela:</b> {nombre_tela_sel}</p>
                 <p style="margin:5px 0;">🎨 <b>Color:</b> {color_nom}</p>
@@ -430,8 +418,8 @@ elif st.session_state.page == "CARRITO":
         
         # Totalizador visual
         st.markdown(f"""
-        <div style="text-align:right; padding:20px; background-color:#F9FAFB; border-radius:10px; margin-bottom:30px;">
-            <span style="font-size:1.2rem; color:#555;">TOTAL A PAGAR:</span>
+        <div style="text-align:right; padding:20px; background-color:#F8FAFC; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:30px;">
+            <span style="font-size:1.2rem; color:#64748b;">TOTAL A PAGAR:</span>
             <span style="font-size:2.5rem; font-weight:800; color:{C_ACCENT}; margin-left:15px;">{total} Bs.</span>
         </div>
         """, unsafe_allow_html=True)
@@ -451,17 +439,26 @@ elif st.session_state.page == "CARRITO":
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("CONFIRMAR Y PROCESAR PEDIDO"):
                 if st.session_state.usuario:
-                    with st.spinner("Generando Orden de Corte Automatizada..."):
+                    with st.spinner("Conectando con Taller... Generando Orden..."):
                         time.sleep(2.5) # Pausa dramática para que se vea que procesa
-                    st.success("¡PEDIDO CONFIRMADO EXITOSAMENTE!")
-                    st.balloons() # Opcional: Si quieres un festejo final, o quítalo si prefieres sobriedad.
+                    
+                    # --- ESTO REEMPLAZA LOS GLOBOS: EL RECIBO DIGITAL ---
+                    numero_orden = f"ORD-{random.randint(10000, 99999)}"
+                    st.success("¡TRANSACCIÓN EXITOSA!")
+                    
                     st.markdown(f"""
-                    <div style="padding:20px; background-color:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; color:#166534;">
-                        <h3>✅ Orden Generada</h3>
-                        <p>Estimado/a <b>{st.session_state.usuario['nombre']}</b>, su pedido ha ingresado a cola de producción.</p>
-                        <p>Nos contactaremos al número provisto para coordinar la entrega.</p>
+                    <div class="digital-receipt">
+                        <div class="receipt-title">✅ ORDEN CONFIRMADA</div>
+                        <p class="receipt-text" style="font-size:1.2rem; color:#000 !important;">ID DE SEGUIMIENTO: <b>{numero_orden}</b></p>
+                        <hr style="border-top: 1px dashed #166534; margin: 15px 0;">
+                        <p class="receipt-text"><b>Cliente:</b> {st.session_state.usuario['nombre']}</p>
+                        <p class="receipt-text"><b>Total:</b> {total} Bs.</p>
+                        <p class="receipt-text"><b>Estado:</b> EN COLA DE CORTE</p>
+                        <br>
+                        <small style="color:#166534 !important;">Se ha enviado una copia al WhatsApp registrado.</small>
                     </div>
                     """, unsafe_allow_html=True)
+                    
                     st.session_state.carrito = []
                 else:
                     st.error("⚠️ ERROR: No se detectó un perfil biométrico activo. Por favor vaya a 'DIGITAL LOCKER' e ingrese su ID.")
