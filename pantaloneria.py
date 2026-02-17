@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN (MODO WHITE PREMIUM - CON PARCHE DARK MODE)
+# 1. CONFIGURACIÓN (MODO "WHITE BÚNKER" - SOLUCIÓN TOTAL)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -14,19 +14,18 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# PALETA DE COLORES "CLEAN TECH" (ESTILO APPLE/FINTECH)
+# PALETA DE COLORES "CLEAN TECH"
 C_TEXT_MAIN = "#111827"   # Negro suave
-C_TEXT_SEC = "#6B7280"    # Gris elegante
 C_ACCENT = "#5B2C6F"      # Morado Marca
 C_BG_APP = "#FFFFFF"      # Blanco Puro
-C_BORDER = "#E5E7EB"      # Borde muy sutil
+C_BORDER = "#E5E7EB"      # Borde sutil
 
-# CSS MAESTRO: ESTÉTICA BLANCA + SOLUCIÓN A MENÚS EN MÓVIL
+# CSS MAESTRO: BLINDAJE CONTRA MODO OSCURO EN MÓVILES
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap');
     
-    /* 1. FORZAR AL NAVEGADOR A MODO CLARO (CRÍTICO PARA MÓVILES) */
+    /* 1. FORZADO DE ESQUEMA DE COLOR */
     :root {{
         color-scheme: light !important;
     }}
@@ -43,42 +42,55 @@ st.markdown(f"""
         color: {C_TEXT_MAIN} !important;
     }}
     
-    /* --- 4. EL PARCHE DEL MENÚ DESPLEGABLE (SELECTBOX) --- */
-    /* Caja del selector */
+    /* --- 4. ZONA CRÍTICA: MENÚS DESPLEGABLES (SELECTBOX) --- */
+    /* Caja del selector cerrada */
     div[data-baseweb="select"] > div {{
         background-color: #FFFFFF !important;
         color: #000000 !important;
         border: 1px solid {C_BORDER} !important;
-        border-radius: 12px !important;
     }}
-    /* Icono de flecha del selector */
-    div[data-baseweb="select"] svg {{
-        fill: #000000 !important;
-    }}
-    /* Texto seleccionado */
     div[data-baseweb="select"] span {{
         color: #000000 !important;
     }}
     
-    /* LA LISTA QUE SE ABRE (POPOVER) - ESTO ARREGLA EL MODO OSCURO */
+    /* LA LISTA FLOTANTE (DONDE ESTABA EL ERROR) */
     div[data-baseweb="popover"], ul[data-baseweb="menu"] {{
         background-color: #FFFFFF !important;
         border: 1px solid {C_BORDER} !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
     }}
-    /* Las opciones dentro de la lista */
+    
+    /* CADA OPCIÓN DE LA LISTA (SOLUCIÓN FONDO NEGRO) */
     li[data-baseweb="option"] {{
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
+        background-color: #FFFFFF !important; /* Fuerza fondo blanco */
+        color: #000000 !important;            /* Fuerza letra negra */
     }}
-    /* Al pasar el dedo/mouse por la opción */
+    
+    /* OPCIÓN AL PASAR EL DEDO/MOUSE */
     li[data-baseweb="option"]:hover, li[aria-selected="true"] {{
-        background-color: #F3F4F6 !important; /* Gris muy suave */
+        background-color: #F3F4F6 !important;
         color: {C_ACCENT} !important;
         font-weight: 700 !important;
     }}
     
-    /* 5. SIDEBAR LIMPIO */
+    /* TEXTO DENTRO DE LA OPCIÓN */
+    li[data-baseweb="option"] div {{
+        color: inherit !important;
+    }}
+    
+    /* --- 5. ZONA CRÍTICA: NOTIFICACIONES (TOASTS) --- */
+    div[data-testid="stToast"] {{
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 1px solid #E5E7EB !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    }}
+    /* Texto e iconos dentro del toast */
+    div[data-testid="stToast"] p, div[data-testid="stToast"] svg {{
+        color: #000000 !important;
+        fill: {C_ACCENT} !important;
+    }}
+    
+    /* 6. SIDEBAR LIMPIO */
     [data-testid="stSidebar"] {{
         background-color: #FAFAFA !important;
         border-right: 1px solid {C_BORDER};
@@ -90,13 +102,13 @@ st.markdown(f"""
         fill: {C_TEXT_MAIN} !important;
     }}
     
-    /* 6. TARJETAS PREMIUM (CLEAN CARDS) */
+    /* 7. TARJETAS PREMIUM */
     .pro-card {{
         background-color: #FFFFFF;
         border: 1px solid {C_BORDER};
-        border-radius: 20px; /* Bordes más curvos = más moderno */
+        border-radius: 20px;
         padding: 30px;
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04); /* Sombra difusa cara */
+        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
         margin-bottom: 25px;
         transition: transform 0.2s ease;
     }}
@@ -105,7 +117,7 @@ st.markdown(f"""
         box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.08);
     }}
     
-    /* 7. BOTONES HIGH-END (NEGROS) */
+    /* 8. BOTONES HIGH-END (NEGROS) */
     .stButton > button {{
         background-color: {C_TEXT_MAIN} !important;
         color: #FFFFFF !important; 
@@ -124,22 +136,21 @@ st.markdown(f"""
     }}
     .stButton > button p {{ color: #FFFFFF !important; }}
     
-    /* 8. INPUTS (CAMPOS DE TEXTO) */
+    /* 9. INPUTS */
     .stTextInput input, .stTextArea textarea {{
         background-color: #FFFFFF !important;
         color: {C_TEXT_MAIN} !important;
         border: 1px solid {C_BORDER} !important;
         border-radius: 12px !important;
-        padding: 12px !important;
     }}
     .stTextInput input:focus {{
         border-color: {C_ACCENT} !important;
         box-shadow: 0 0 0 3px rgba(91, 44, 111, 0.1) !important;
     }}
     
-    /* 9. RECIBO DIGITAL (TICKET) */
+    /* 10. RECIBO DIGITAL (TICKET) */
     .receipt-box {{
-        background-color: #F0FDF4; /* Verde menta muy claro */
+        background-color: #F0FDF4;
         border: 1px solid #BBF7D0;
         border-radius: 16px;
         padding: 30px;
@@ -194,7 +205,6 @@ with st.sidebar:
     st.markdown("<h4 style='text-align:center; margin:0; font-weight:800; letter-spacing:-0.5px;'>PANTALONERÍA<br>INTEGRAL</h4>", unsafe_allow_html=True)
     st.markdown("---")
     
-    # Navegación con nombres correctos
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
     if st.button("🔐 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
     if st.button("🎨 CATÁLOGO & DISEÑO"): st.session_state.page = "CATALOGO"
@@ -221,7 +231,6 @@ if st.session_state.page == "INICIO":
     </div>
     """, unsafe_allow_html=True)
     
-    # KPIs Estilo Banco/Fintech
     k1, k2, k3 = st.columns(3)
     k1.metric("Precisión", "99.9%", "Biometría 3D")
     k2.metric("Entrega", "24 - 48 Hrs", "Producción Local")
@@ -263,7 +272,6 @@ elif st.session_state.page == "LOCKER":
         id_user = st.text_input("ID Cliente", placeholder="Ej: 1004")
         if st.button("ACCEDER AL SISTEMA"):
             if id_user in DB_CLIENTES:
-                # Animación de carga técnica
                 progreso = st.progress(0, text="Conectando Servidor Seguro...")
                 time.sleep(0.3)
                 progreso.progress(45, text="Desencriptando parámetros corporales...")
@@ -313,6 +321,7 @@ elif st.session_state.page == "LOCKER":
                 col_b.metric("Tiro", u['tiro'])
                 col_a.metric("Muslo", u['muslo'])
                 col_b.metric("Rodilla", u['rodilla'])
+                
                 st.success(f"✅ FIT ASIGNADO: **{u['fit']}**")
         else:
             st.info("🔒 El sistema está en modo espera. Ingrese un ID válido.")
@@ -328,7 +337,6 @@ elif st.session_state.page == "CATALOGO":
     
     with c_config:
         st.subheader("1. LÍNEA")
-        # El menú desplegable ahora será BLANCO en móviles gracias al CSS
         linea = st.selectbox("Categoría:", ["LÍNEA ESTÁNDAR (Uso Diario)", "LÍNEA PREMIUM (Ejecutivo)"])
         
         opciones_telas = {}
@@ -380,12 +388,11 @@ elif st.session_state.page == "CATALOGO":
         
         st.write("")
         if st.button("AÑADIR A MI BOLSA"):
-            # Secuencia de Notificaciones de Ingeniería (Toast)
-            st.toast("⚙️ Validando stock de materia prima...", icon="🏭")
+            st.toast("⚙️ Validando stock...", icon="🏭")
             time.sleep(0.5)
-            st.toast("📐 Vinculando con perfil biométrico...", icon="👤")
+            st.toast("📐 Vinculando biometría...", icon="👤")
             time.sleep(0.5)
-            st.toast("✅ ¡Ítem agregado a la orden de producción!", icon="🛍️")
+            st.toast("✅ ¡Ítem agregado!", icon="🛍️")
             
             st.session_state.carrito.append({
                 "Línea": linea, "Tela": nombre_tela_sel, "Color": color_nom, "Precio": precio
@@ -396,13 +403,11 @@ elif st.session_state.page == "CARRITO":
     st.markdown("## 🛍️ BOLSA DE COMPRAS")
     
     if len(st.session_state.carrito) > 0:
-        # Tabla estilizada
         df = pd.DataFrame(st.session_state.carrito)
         st.dataframe(df, use_container_width=True, hide_index=True)
         
         total = df['Precio'].sum()
         
-        # Totalizador visual
         st.markdown(f"""
         <div style="text-align:right; padding:30px; background-color:#F9FAFB; border-radius:16px; border:1px solid #E5E7EB; margin-bottom:40px;">
             <span style="font-size:1.2rem; color:#6B7280; font-weight:500;">TOTAL A PAGAR:</span>
@@ -428,7 +433,6 @@ elif st.session_state.page == "CARRITO":
                     with st.spinner("Generando Orden de Corte Automatizada..."):
                         time.sleep(2.5) 
                     
-                    # --- RECIBO DIGITAL (TICKET PREMIUM) ---
                     numero_orden = f"ORD-{random.randint(10000, 99999)}"
                     st.success("¡TRANSACCIÓN EXITOSA!")
                     
