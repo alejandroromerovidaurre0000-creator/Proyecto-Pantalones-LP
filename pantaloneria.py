@@ -5,7 +5,7 @@ import time
 import random
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (ALTO CONTRASTE)
+# 1. CONFIGURACIÓN VISUAL (MODO "ANTIBUG" REFORZADO)
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -18,34 +18,42 @@ st.set_page_config(
 C_BLACK = "#000000"   # Negro Puro
 C_TEXT_W = "#FFFFFF"  # Blanco Puro
 C_ACCENT = "#5B2C6F"  # Morado
-C_BG_SIDE = "#F0F2F6" # Gris Claro para menú
+C_BG_SIDE = "#F2F3F5" # Gris Claro para menú
 
-# CSS BLINDADO (SOLUCIÓN A LETRAS INVISIBLES)
+# CSS BLINDADO (SOLUCIÓN DEFINITIVA A LETRAS INVISIBLES)
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
     
-    /* 1. FORZAR FONDO BLANCO Y LETRAS NEGRAS EN TODA LA APP */
+    /* 1. FORZAR MODO CLARO GLOBAL (Evita conflicto con Dark Mode del celular) */
     .stApp {{
         background-color: #FFFFFF !important;
         color: #000000 !important;
         font-family: 'Montserrat', sans-serif;
     }}
     
-    /* 2. ARREGLAR MENU LATERAL (SIDEBAR) */
+    /* 2. ARREGLO ESPECÍFICO DEL MENÚ LATERAL (SIDEBAR) */
     [data-testid="stSidebar"] {{
         background-color: {C_BG_SIDE} !important;
         border-right: 1px solid #ddd;
     }}
-    /* Forzar color negro a todos los textos del menú */
-    [data-testid="stSidebar"] * {{
-        color: #000000 !important;
+    
+    /* ESTO ES LO QUE ARREGLA LAS LETRAS INVISIBLES EN EL MENU */
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3, 
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] span, 
+    [data-testid="stSidebar"] div, 
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stRadio label p {{
+        color: #000000 !important; /* Fuerza color negro SIEMPRE */
     }}
     
     /* 3. ARREGLAR BOTONES (FONDO NEGRO / LETRA BLANCA) */
     .stButton > button {{
         background-color: {C_BLACK} !important;
-        color: {C_TEXT_W} !important; /* ESTO ARREGLA EL TEXTO INVISIBLE */
+        color: {C_TEXT_W} !important;
         border: none !important;
         border-radius: 6px !important;
         height: 55px !important;
@@ -60,7 +68,17 @@ st.markdown(f"""
         transform: translateY(-2px);
     }}
     
-    /* 4. HEADER Y TEXTOS */
+    /* 4. ARREGLAR LOS "PUNTITOS" DEL RADIO BUTTON (EL MENÚ) */
+    .stRadio > div[role="radiogroup"] > label {{
+        color: #000000 !important;
+        background-color: transparent !important;
+    }}
+    /* Cuando pasas el mouse por encima */
+    .stRadio > div[role="radiogroup"] > label:hover {{
+        color: {C_ACCENT} !important;
+    }}
+    
+    /* 5. HEADER Y TEXTOS */
     .brand-header {{
         text-align: center;
         padding: 30px 0;
@@ -76,7 +94,7 @@ st.markdown(f"""
         letter-spacing: -1px;
     }}
     
-    /* 5. TARJETAS */
+    /* 6. TARJETAS */
     .info-card {{
         background: #FFFFFF !important;
         padding: 20px;
@@ -85,13 +103,10 @@ st.markdown(f"""
         border: 1px solid #e0e0e0;
     }}
     
-    /* 6. INPUTS Y SELECTORES (Para que se lean bien) */
-    .stTextInput > div > div > input {{
+    /* 7. INPUTS (Para que lo que escribas se vea negro) */
+    .stTextInput input, .stTextArea textarea, .stSelectbox div {{
         color: #000000 !important;
         background-color: #FFFFFF !important;
-    }}
-    .stSelectbox > div > div {{
-        color: #000000 !important;
     }}
     
     /* SWATCHES DE COLOR */
@@ -142,16 +157,16 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL (MENU CORREGIDO)
+# 3. BARRA LATERAL (MENU LATERAL)
 # ==============================================================================
 with st.sidebar:
     st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center; margin-top:0; color:#000 !important;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; margin-top:0; color:#000000 !important;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
     # Navegación
     if st.button("🏠 INICIO"): st.session_state.page = "INICIO"
-    if st.button("👤 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
+    if st.button("🔐 PERFIL BIOMÉTRICO"): st.session_state.page = "LOCKER"
     if st.button("👖 DISEÑAR PANTALÓN"): st.session_state.page = "CATALOGO"
     if st.button("🛒 BOLSA DE COMPRA"): st.session_state.page = "CARRITO"
     
@@ -333,16 +348,16 @@ elif st.session_state.page == "CARRITO":
             st.text_area("Dirección Exacta", placeholder="Av. Principal #123, Edificio...")
             st.text_input("Referencia Visual", placeholder="Frente a la Farmacia...")
         with c2:
-            st.text_input("Celular / WhatsApp")
+            st.text_input("Celular de Contacto")
             st.selectbox("Pago", ["Transferencia QR", "Efectivo Contra-entrega"])
             
             st.write("")
             if st.button("CONFIRMAR PEDIDO"):
                 if st.session_state.usuario:
-                    with st.spinner("Procesando..."):
+                    with st.spinner("Procesando Orden de Corte..."):
                         time.sleep(2)
                     st.success("¡PEDIDO CONFIRMADO!")
-                    st.info(f"Orden generada para: {st.session_state.usuario['nombre']}. Entrega en 24-48 hrs.")
+                    st.info(f"Gracias {st.session_state.usuario['nombre']}. Nos contactaremos para coordinar la entrega.")
                     st.session_state.carrito = []
                 else:
                     st.error("Por favor, identifíquese en 'PERFIL BIOMÉTRICO' antes de comprar.")
