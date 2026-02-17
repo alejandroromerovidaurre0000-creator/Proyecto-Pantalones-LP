@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import time
 
 # ==============================================================================
-# 1. CONFIGURACIÓN VISUAL (ESTILO "LUJO SILENCIOSO")
+# 1. CONFIGURACIÓN VISUAL (MODO "ANTIBUG")
 # ==============================================================================
 st.set_page_config(
     page_title="PANTALONERÍA INTEGRAL",
@@ -19,42 +19,61 @@ C_ACCENT = "#5B2C6F" # Morado oscuro elegante
 C_BG_SIDEBAR = "#F7F9F9"
 C_WHITE = "#FFFFFF"
 
-# CSS PERSONALIZADO
+# CSS PERSONALIZADO (SOLUCIÓN ERROR TRANSPARENCIA)
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
     
-    .stApp {{
+    /* FORZAR MODO CLARO SIEMPRE (Evita bugs de modo oscuro) */
+    [data-testid="stAppViewContainer"] {{
         background-color: {C_WHITE};
+        color: {C_BLACK};
         font-family: 'Montserrat', sans-serif;
+    }}
+    
+    /* FORZAR TEXTO NEGRO EN TODOS LADOS */
+    h1, h2, h3, h4, h5, h6, p, span, div, label {{
+        color: {C_BLACK} !important;
     }}
     
     /* HEADER LIMPIO */
     .header-box {{
         text-align: center;
-        padding: 40px 0;
+        padding: 30px 0;
         margin-bottom: 30px;
         border-bottom: 1px solid #eee;
+        background-color: {C_WHITE};
     }}
     .header-title {{
         font-size: 3rem;
         font-weight: 800;
-        color: {C_BLACK};
+        color: {C_BLACK} !important;
         letter-spacing: -1px;
         margin: 0;
+        line-height: 1.1;
     }}
     .header-sub {{
         font-size: 0.9rem;
-        color: #777;
+        color: #666 !important;
         letter-spacing: 3px;
         text-transform: uppercase;
         margin-top: 10px;
+    }}
+    
+    /* AJUSTE PARA MÓVILES */
+    @media (max-width: 768px) {{
+        .header-title {{ font-size: 2rem; }}
+        .header-sub {{ letter-spacing: 1px; font-size: 0.7rem; }}
+        .big-price {{ font-size: 2.5rem !important; }}
     }}
     
     /* SIDEBAR */
     [data-testid="stSidebar"] {{
         background-color: {C_BG_SIDEBAR};
         border-right: 1px solid #e0e0e0;
+    }}
+    [data-testid="stSidebar"] h3, [data-testid="stSidebar"] p, [data-testid="stSidebar"] span {{
+        color: {C_BLACK} !important;
     }}
     
     /* TARJETAS */
@@ -79,17 +98,17 @@ st.markdown(f"""
     
     /* PRECIO GRANDE */
     .big-price {{
-        font-size: 3rem;
+        font-size: 3.5rem;
         font-weight: 800;
-        color: {C_ACCENT};
+        color: {C_ACCENT} !important;
         line-height: 1;
     }}
     
     /* BOTONES */
     .stButton>button {{
-        background-color: {C_BLACK};
-        color: white;
-        border-radius: 4px;
+        background-color: {C_BLACK} !important;
+        color: white !important;
+        border-radius: 6px;
         height: 55px;
         font-weight: 600;
         border: none;
@@ -98,7 +117,10 @@ st.markdown(f"""
         letter-spacing: 1px;
         transition: 0.2s;
     }}
-    .stButton>button:hover {{ background-color: {C_ACCENT}; transform: translateY(-2px); }}
+    .stButton>button:hover {{ background-color: {C_ACCENT} !important; transform: translateY(-2px); }}
+    
+    /* TEXTO DE MENSAJES (TOAST/SUCCESS) */
+    .stToast {{ color: {C_BLACK} !important; }}
     
     /* Ocultar elementos extra */
     #MainMenu {{visibility: hidden;}}
@@ -110,7 +132,6 @@ st.markdown(f"""
 # ==============================================================================
 # 2. BASE DE DATOS DE CLIENTES
 # ==============================================================================
-# "radar_data" son los valores para el gráfico de ingeniería [Cintura, Cadera, Muslo, Largo, Tiro]
 DB_CLIENTES = {
     '1001': {
         'nombre': 'Alejandro Romero', 'cargo': 'Postulante',
@@ -133,7 +154,7 @@ DB_CLIENTES = {
         'radar_data': [88, 100, 58, 102, 27]
     }
 }
-# Medidas promedio (Referencia visual en gris)
+# Medidas promedio
 STANDARD_REF = [85, 100, 58, 100, 27]
 
 # Estado de la sesión
@@ -145,7 +166,7 @@ if 'page' not in st.session_state: st.session_state.page = "INICIO"
 # 3. BARRA LATERAL (NAVEGACIÓN)
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div style='text-align:center; font-size: 40px;'>🧵</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center; font-size: 50px;'>🧵</div>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align:center; color:#333; margin:0;'>PANTALONERÍA<br>INTEGRAL</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
@@ -240,7 +261,7 @@ elif st.session_state.page == "LOCKER":
             # Header del Cliente
             st.markdown(f"""
             <div class="card" style="border-left: 5px solid {C_ACCENT}; margin-bottom: 20px;">
-                <h2 style="margin:0; color:{C_ACCENT};">{u['nombre']}</h2>
+                <h2 style="margin:0; color:{C_ACCENT} !important;">{u['nombre']}</h2>
                 <p style="color:#555; margin:0;">{u['cargo'].upper()} | PERFIL VERIFICADO</p>
                 <hr>
                 <p><b>FIT ASIGNADO:</b> {u['fit']}</p>
@@ -261,8 +282,13 @@ elif st.session_state.page == "LOCKER":
                       r=STANDARD_REF, theta=categories, name='Estándar', line_color='#ccc', line_dash='dot'
                 ))
                 fig.update_layout(
-                  polar=dict(radialaxis=dict(visible=True, range=[0, 120])),
-                  showlegend=True, height=300, margin=dict(l=40, r=40, t=20, b=20)
+                  polar=dict(
+                      radialaxis=dict(visible=True, range=[0, 120]),
+                      bgcolor='white' # Fondo blanco forzado para el gráfico
+                  ),
+                  showlegend=True, height=300, margin=dict(l=40, r=40, t=20, b=20),
+                  paper_bgcolor='rgba(0,0,0,0)',
+                  font=dict(color='black') # Texto negro forzado en gráfico
                 )
                 st.plotly_chart(fig, use_container_width=True)
             
@@ -294,8 +320,7 @@ elif st.session_state.page == "CATALOGO":
         st.subheader("1. SELECCIONA LÍNEA")
         linea = st.selectbox("Categoría:", ["LÍNEA ESTÁNDAR (Uso Diario)", "LÍNEA PREMIUM (Ejecutivo)"])
         
-        # Mapeo de Precios EXACTOS (Solución al error anterior)
-        # Diccionario: Nombre Tela -> Precio
+        # Mapeo de Precios EXACTOS
         opciones_telas = {} 
         desc = ""
         
@@ -318,7 +343,7 @@ elif st.session_state.page == "CATALOGO":
         # Selector de llaves (Nombres de tela)
         nombre_tela = st.radio("Opciones:", list(opciones_telas.keys()))
         
-        # Obtener precio del diccionario (SIN PARSEAR TEXTO)
+        # Obtener precio del diccionario
         precio_final = opciones_telas[nombre_tela]
         
         st.subheader("3. COLOR")
@@ -362,7 +387,7 @@ elif st.session_state.page == "CARRITO":
         st.table(df)
         
         total = df['Precio'].sum()
-        st.markdown(f"<h2 style='text-align:right; color:{C_ACCENT}'>TOTAL: {total} Bs.</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='text-align:right; color:{C_ACCENT} !important;'>TOTAL: {total} Bs.</h2>", unsafe_allow_html=True)
         
         st.markdown("---")
         st.subheader("🚚 Datos de Envío")
