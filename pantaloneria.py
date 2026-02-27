@@ -8,10 +8,10 @@ import random
 # 1. CONFIGURACIÓN (MODO "WHITE BÚNKER" - SOLUCIÓN TOTAL)
 # ==============================================================================
 st.set_page_config(
-    page_title="PANTALONERÍA INTEGRAL",
-    page_icon="🧵",
+    page_title="PANTALONERÍA INTEGRAL | Enterprise",
+    page_icon="🔒",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed" # Colapsado por seguridad al inicio
 )
 
 # PALETA DE COLORES "CLEAN TECH"
@@ -20,7 +20,7 @@ C_ACCENT = "#5B2C6F"      # Morado Marca
 C_BG_APP = "#FFFFFF"      # Blanco Puro
 C_BORDER = "#E5E7EB"      # Borde sutil
 
-# CSS MAESTRO: BLINDAJE CONTRA MODO OSCURO EN MÓVILES
+# CSS MAESTRO: BLINDAJE CONTRA MODO OSCURO EN MÓVILES + ESTILO PREMIUM
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap');
@@ -103,7 +103,7 @@ st.markdown(f"""
     }}
     
     /* 7. TARJETAS PREMIUM */
-    .pro-card {{
+    .pro-card, .login-card {{
         background-color: #FFFFFF;
         border: 1px solid {C_BORDER};
         border-radius: 20px;
@@ -128,6 +128,7 @@ st.markdown(f"""
         border: none !important;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        width: 100%;
     }}
     .stButton > button:hover {{
         background-color: {C_ACCENT} !important;
@@ -142,6 +143,7 @@ st.markdown(f"""
         color: {C_TEXT_MAIN} !important;
         border: 1px solid {C_BORDER} !important;
         border-radius: 12px !important;
+        padding: 12px !important;
     }}
     .stTextInput input:focus {{
         border-color: {C_ACCENT} !important;
@@ -167,7 +169,43 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# 2. BASE DE DATOS
+# 2. SISTEMA DE SEGURIDAD (CANDADO)
+# ==============================================================================
+# --- CAMBIA ESTO POR TU CONTRASEÑA ---
+CLAVE_MAESTRA = "admin2026" 
+# -------------------------------------
+
+if 'access_granted' not in st.session_state:
+    st.session_state.access_granted = False
+
+# BLOQUEO DE SEGURIDAD
+if not st.session_state.access_granted:
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="login-card" style="text-align:center;">
+            <div style="font-size: 50px; margin-bottom:10px;">🔒</div>
+            <h2 style="margin:0; font-weight:800;">ACCESO CORPORATIVO</h2>
+            <p style="color:#666 !important; margin-top:5px;">Pantaloneria Integral System v3.0</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        password = st.text_input("Credenciales de Acceso", type="password", placeholder="••••••••")
+        
+        if st.button("INICIAR SESIÓN SEGURA"):
+            if password == CLAVE_MAESTRA:
+                with st.spinner("Verificando credenciales encriptadas..."):
+                    time.sleep(1)
+                st.session_state.access_granted = True
+                st.rerun()
+            else:
+                st.error("⛔ ACCESO DENEGADO")
+    
+    st.stop() # DETIENE TODO EL CÓDIGO AQUÍ SI NO HAY LOGIN
+
+# ==============================================================================
+# 3. BASE DE DATOS Y APP (SOLO SE CARGA SI HAY LOGIN)
 # ==============================================================================
 DB_CLIENTES = {
     '1001': {
@@ -198,7 +236,7 @@ if 'usuario' not in st.session_state: st.session_state.usuario = None
 if 'page' not in st.session_state: st.session_state.page = "INICIO"
 
 # ==============================================================================
-# 3. BARRA LATERAL
+# 4. BARRA LATERAL (VISIBLE SOLO TRAS LOGIN)
 # ==============================================================================
 with st.sidebar:
     st.markdown("<div style='text-align:center; margin-bottom:15px; font-size: 45px;'>🧵</div>", unsafe_allow_html=True)
@@ -211,6 +249,11 @@ with st.sidebar:
     if st.button("🛍️ BOLSA DE COMPRA"): st.session_state.page = "CARRITO"
     
     st.markdown("---")
+    # Botón para salir
+    if st.button("CERRAR SESIÓN"):
+        st.session_state.access_granted = False
+        st.rerun()
+        
     st.caption("**Postulante:** Alejandro M. Romero")
     
     with st.expander("Tribunal Evaluador", expanded=True):
@@ -219,7 +262,7 @@ with st.sidebar:
         st.markdown("• Relator: Miguel Vidal Sejas")
 
 # ==============================================================================
-# 4. PÁGINAS DEL SISTEMA
+# 5. PÁGINAS DEL SISTEMA
 # ==============================================================================
 
 # --- INICIO ---
